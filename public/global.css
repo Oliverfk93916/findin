@@ -101,11 +101,28 @@ a[href^="http://maps.google.com/maps"]{display:none !important}
 
 .inputIcon {
   position: absolute;
-  right: 10px;
-  margin-top: 9px;
-  font-size: 200%;
+  right: 16px;
+  margin-top: 10px;
+  font-size:180%;
   color: #e67e22;
-  font-weight: 100;
+}
+
+
+.centerContainer {
+	position: fixed;
+	margin-top: -17%;
+	margin-left:85%;
+	z-index: 2;
+	border: none;
+	background: transparent;
+}
+
+.centerButton {
+	width: 40px;
+	height: 40px;
+	font-size: 240%;
+	padding-top: 10%;
+	color: #e67e22;
 }
 
 .listContainer {
@@ -113,6 +130,7 @@ a[href^="http://maps.google.com/maps"]{display:none !important}
 	margin-left:2.5%; 
 	margin-top: 2%
 }
+
 .menuContainer{
 	position: fixed;
 	top: 15px;

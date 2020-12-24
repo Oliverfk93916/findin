@@ -4,7 +4,7 @@
 	import {onMount} from 'svelte'
 
 	//map styles
-	import homeMap from '../components/Map/homeMap'
+	import homeMap, {centerMap} from '../components/Map/homeMap'
 
 	let ingredient = ''
 
@@ -14,20 +14,26 @@
 
 </script>
 
+<!-- MENU BARS -->
 <div>
-  <span>
-		<button class="menuContainer">
-			<i class="fas fa-bars menuButton">
-		</button>
-	</span>
-	</div>
+	<button class="menuContainer">
+		<i class="fas fa-bars menuButton">
+	</button>
+</div>
 
+<!-- MAP -->
 	<div id="interactiveMap" class="mapHome">
 	</div>
 
+<!-- RE-CENTER -->
+<div>
+  <button on:click={centerMap} class="centerContainer">
+    <i class="far fa-compass centerButton">
+  </button>
+</div>
 <!-- INGREDIENT SEARCH -->
 <div class="input-group mb-3 input-group-lg ingredientInput" style="position: absolute;">
-  <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Search Ingredient" bind:value={ingredient}>
+  <input type="text" class="form-control" style="border-radius: 25px;"id="input" placeholder="Search Ingredient" bind:value={ingredient}>
   <i class="fas fa-search-location inputIcon">
 </div>
 
