@@ -4,12 +4,12 @@
 	import {onMount} from 'svelte'
 
 	//map styles
-	import mapCurrentLocation from '../google/mapCurrentLocation'
+	import homeMap from '../components/Map/homeMap'
 
 	let ingredient = ''
 
 	onMount(()=> {
-		 mapCurrentLocation()
+		 homeMap()
 	})
 
 </script>
@@ -22,7 +22,7 @@
 	</span>
 	</div>
 
-	<div id="interactiveMap" class="mapHome" style="z-index: 1; position: fixed;">
+	<div id="interactiveMap" class="mapHome">
 	</div>
 
 <!-- INGREDIENT SEARCH -->
@@ -34,44 +34,47 @@
 
 
 <!-- STORE LIST -->
-<div class="list-group" style="width: 95%; margin-left:2.5%; margin-top: 2.5%">
+<div class="list-group listContainer">
 
-  	<!-- Store 1 -->
-  <li class="list-group-item list-group-item-action">
+<!-- Store 1 -->
+  <!-- <li class="list-group-item list-group-item-action">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Store 1</h5>
-      <small class="text-muted">rating</small>
+      <small class="text-muted">disance</small>
     </div>
     <p class="mb-1">Item.</p>
     <small class="text-muted">more item info.</small>
-  </li>
+  </li> -->
   <!-- Store 2 -->
-  <li class="list-group-item list-group-item-action">
+
+  <!-- <li class="list-group-item list-group-item-action">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Store 2</h5>
-      <small class="text-muted">rating</small>
+      <small class="text-muted">disance</small>
     </div>
     <p class="mb-1">Item.</p>
     <small class="text-muted">more item info.</small>
-  </li>
+  </li> -->
   <!-- Store 3 -->
-  <li class="list-group-item list-group-item-action">
+
+  <!-- <li class="list-group-item list-group-item-action">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Store 3</h5>
-      <small class="text-muted">rating</small>
+      <small class="text-muted">disance</small>
     </div>
     <p class="mb-1">Item.</p>
     <small class="text-muted">more item info.</small>
-  </li>
+  </li> -->
   <!-- Store 4 -->
- <li class="list-group-item list-group-item-action">
+
+ <!-- <li class="list-group-item list-group-item-action">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">Store 4</h5>
-      <small class="text-muted">rating</small>
+      <small class="text-muted">disance</small>
     </div>
     <p class="mb-1">Item.</p>
     <small class="text-muted">more item info.</small>
-  </li>
+  </li> -->
 </div>
 
 
