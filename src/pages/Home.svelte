@@ -14,27 +14,28 @@
 
 </script>
 
-	<div style="position: fixed;top: 10px;left: 10px; z-index: 2">
-	<span>
-		<button>
-			<i class="fas fa-bars">
+<div>
+  <span>
+		<button class="menuContainer">
+			<i class="fas fa-bars menuButton">
 		</button>
 	</span>
 	</div>
+
 	<div id="interactiveMap" class="mapHome" style="z-index: 1; position: fixed;">
 	</div>
 
-<!-- <form class="px-5 py-3" style="width: 60%; margin-left: 20%;">
-    <div class="mb-3">
-    	<label for="ingredient" class="form-label" style="color: #000; text-align: center">INGREDIENT</label>
-		<input type="text" id="ingredient" class="form-control" bind:value={ingredient}>
-    </div>
-</form> -->
-<div class="mb-3 ingredientInput" style="position: absolute;">
-  <label for="formGroupExampleInput" class="form-label" style="margin-bottom: 0">INGREDIENT</label>
-  <input type="text" class="form-control" id="formGroupExampleInput">
-  </div>
-  <div class="list-group" style="width: 95%; margin-left:2.5%; margin-top: 2.5%">
+<!-- INGREDIENT SEARCH -->
+<div class="input-group mb-3 input-group-lg ingredientInput" style="position: absolute;">
+  <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Search Ingredient" bind:value={ingredient}>
+  <i class="fas fa-search-location inputIcon">
+</div>
+
+
+
+<!-- STORE LIST -->
+<div class="list-group" style="width: 95%; margin-left:2.5%; margin-top: 2.5%">
+
   	<!-- Store 1 -->
   <li class="list-group-item list-group-item-action">
     <div class="d-flex w-100 justify-content-between">

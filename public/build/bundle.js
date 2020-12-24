@@ -147,6 +147,9 @@ var app = (function () {
     function children(element) {
         return Array.from(element.childNodes);
     }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
+    }
     function set_style(node, key, value, important) {
         node.style.setProperty(key, value, important ? 'important' : '');
     }
@@ -2236,205 +2239,202 @@ var app = (function () {
     	let div0;
     	let span;
     	let button;
-    	let i;
+    	let i0;
     	let t0;
     	let div1;
     	let t1;
     	let div2;
-    	let label;
-    	let t3;
     	let input;
-    	let t4;
+    	let t2;
+    	let i1;
+    	let t3;
     	let div7;
     	let li0;
     	let div3;
     	let h50;
-    	let t6;
+    	let t5;
     	let small0;
-    	let t8;
+    	let t7;
     	let p0;
-    	let t10;
+    	let t9;
     	let small1;
-    	let t12;
+    	let t11;
     	let li1;
     	let div4;
     	let h51;
-    	let t14;
+    	let t13;
     	let small2;
-    	let t16;
+    	let t15;
     	let p1;
-    	let t18;
+    	let t17;
     	let small3;
-    	let t20;
+    	let t19;
     	let li2;
     	let div5;
     	let h52;
-    	let t22;
+    	let t21;
     	let small4;
-    	let t24;
+    	let t23;
     	let p2;
-    	let t26;
+    	let t25;
     	let small5;
-    	let t28;
+    	let t27;
     	let li3;
     	let div6;
     	let h53;
-    	let t30;
+    	let t29;
     	let small6;
-    	let t32;
+    	let t31;
     	let p3;
-    	let t34;
+    	let t33;
     	let small7;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
     			div0 = element("div");
     			span = element("span");
     			button = element("button");
-    			i = element("i");
+    			i0 = element("i");
     			t0 = space();
     			div1 = element("div");
     			t1 = space();
     			div2 = element("div");
-    			label = element("label");
-    			label.textContent = "INGREDIENT";
-    			t3 = space();
     			input = element("input");
-    			t4 = space();
+    			t2 = space();
+    			i1 = element("i");
+    			t3 = space();
     			div7 = element("div");
     			li0 = element("li");
     			div3 = element("div");
     			h50 = element("h5");
     			h50.textContent = "Store 1";
-    			t6 = space();
+    			t5 = space();
     			small0 = element("small");
     			small0.textContent = "rating";
-    			t8 = space();
+    			t7 = space();
     			p0 = element("p");
     			p0.textContent = "Item.";
-    			t10 = space();
+    			t9 = space();
     			small1 = element("small");
     			small1.textContent = "more item info.";
-    			t12 = space();
+    			t11 = space();
     			li1 = element("li");
     			div4 = element("div");
     			h51 = element("h5");
     			h51.textContent = "Store 2";
-    			t14 = space();
+    			t13 = space();
     			small2 = element("small");
     			small2.textContent = "rating";
-    			t16 = space();
+    			t15 = space();
     			p1 = element("p");
     			p1.textContent = "Item.";
-    			t18 = space();
+    			t17 = space();
     			small3 = element("small");
     			small3.textContent = "more item info.";
-    			t20 = space();
+    			t19 = space();
     			li2 = element("li");
     			div5 = element("div");
     			h52 = element("h5");
     			h52.textContent = "Store 3";
-    			t22 = space();
+    			t21 = space();
     			small4 = element("small");
     			small4.textContent = "rating";
-    			t24 = space();
+    			t23 = space();
     			p2 = element("p");
     			p2.textContent = "Item.";
-    			t26 = space();
+    			t25 = space();
     			small5 = element("small");
     			small5.textContent = "more item info.";
-    			t28 = space();
+    			t27 = space();
     			li3 = element("li");
     			div6 = element("div");
     			h53 = element("h5");
     			h53.textContent = "Store 4";
-    			t30 = space();
+    			t29 = space();
     			small6 = element("small");
     			small6.textContent = "rating";
-    			t32 = space();
+    			t31 = space();
     			p3 = element("p");
     			p3.textContent = "Item.";
-    			t34 = space();
+    			t33 = space();
     			small7 = element("small");
     			small7.textContent = "more item info.";
-    			attr_dev(i, "class", "fas fa-bars");
-    			add_location(i, file$1, 19, 3, 331);
-    			add_location(button, file$1, 18, 2, 319);
-    			add_location(span, file$1, 17, 1, 310);
-    			set_style(div0, "position", "fixed");
-    			set_style(div0, "top", "10px");
-    			set_style(div0, "left", "10px");
-    			set_style(div0, "z-index", "2");
-    			add_location(div0, file$1, 16, 1, 246);
+    			attr_dev(i0, "class", "fas fa-bars menuButton");
+    			add_location(i0, file$1, 19, 3, 296);
+    			attr_dev(button, "class", "menuContainer");
+    			add_location(button, file$1, 18, 2, 262);
+    			add_location(span, file$1, 17, 2, 253);
+    			add_location(div0, file$1, 16, 0, 245);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
     			set_style(div1, "z-index", "1");
     			set_style(div1, "position", "fixed");
-    			add_location(div1, file$1, 23, 1, 385);
-    			attr_dev(label, "for", "formGroupExampleInput");
-    			attr_dev(label, "class", "form-label");
-    			set_style(label, "margin-bottom", "0");
-    			add_location(label, file$1, 33, 2, 842);
+    			add_location(div1, file$1, 24, 1, 362);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			attr_dev(input, "id", "formGroupExampleInput");
-    			add_location(input, file$1, 34, 2, 942);
-    			attr_dev(div2, "class", "mb-3 ingredientInput");
+    			attr_dev(input, "placeholder", "Search Ingredient");
+    			add_location(input, file$1, 29, 2, 569);
+    			attr_dev(i1, "class", "fas fa-search-location inputIcon");
+    			add_location(i1, file$1, 30, 2, 695);
+    			attr_dev(div2, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div2, "position", "absolute");
-    			add_location(div2, file$1, 32, 0, 777);
+    			add_location(div2, file$1, 28, 0, 477);
     			attr_dev(h50, "class", "mb-1");
-    			add_location(h50, file$1, 40, 6, 1236);
+    			add_location(h50, file$1, 41, 6, 986);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 41, 6, 1272);
+    			add_location(small0, file$1, 42, 6, 1022);
     			attr_dev(div3, "class", "d-flex w-100 justify-content-between");
-    			add_location(div3, file$1, 39, 4, 1179);
+    			add_location(div3, file$1, 40, 4, 929);
     			attr_dev(p0, "class", "mb-1");
-    			add_location(p0, file$1, 43, 4, 1328);
+    			add_location(p0, file$1, 44, 4, 1078);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 44, 4, 1358);
+    			add_location(small1, file$1, 45, 4, 1108);
     			attr_dev(li0, "class", "list-group-item list-group-item-action");
-    			add_location(li0, file$1, 38, 2, 1123);
+    			add_location(li0, file$1, 39, 2, 873);
     			attr_dev(h51, "class", "mb-1");
-    			add_location(h51, file$1, 49, 6, 1550);
+    			add_location(h51, file$1, 50, 6, 1300);
     			attr_dev(small2, "class", "text-muted");
-    			add_location(small2, file$1, 50, 6, 1586);
+    			add_location(small2, file$1, 51, 6, 1336);
     			attr_dev(div4, "class", "d-flex w-100 justify-content-between");
-    			add_location(div4, file$1, 48, 4, 1493);
+    			add_location(div4, file$1, 49, 4, 1243);
     			attr_dev(p1, "class", "mb-1");
-    			add_location(p1, file$1, 52, 4, 1642);
+    			add_location(p1, file$1, 53, 4, 1392);
     			attr_dev(small3, "class", "text-muted");
-    			add_location(small3, file$1, 53, 4, 1672);
+    			add_location(small3, file$1, 54, 4, 1422);
     			attr_dev(li1, "class", "list-group-item list-group-item-action");
-    			add_location(li1, file$1, 47, 2, 1437);
+    			add_location(li1, file$1, 48, 2, 1187);
     			attr_dev(h52, "class", "mb-1");
-    			add_location(h52, file$1, 58, 6, 1864);
+    			add_location(h52, file$1, 59, 6, 1614);
     			attr_dev(small4, "class", "text-muted");
-    			add_location(small4, file$1, 59, 6, 1900);
+    			add_location(small4, file$1, 60, 6, 1650);
     			attr_dev(div5, "class", "d-flex w-100 justify-content-between");
-    			add_location(div5, file$1, 57, 4, 1807);
+    			add_location(div5, file$1, 58, 4, 1557);
     			attr_dev(p2, "class", "mb-1");
-    			add_location(p2, file$1, 61, 4, 1956);
+    			add_location(p2, file$1, 62, 4, 1706);
     			attr_dev(small5, "class", "text-muted");
-    			add_location(small5, file$1, 62, 4, 1986);
+    			add_location(small5, file$1, 63, 4, 1736);
     			attr_dev(li2, "class", "list-group-item list-group-item-action");
-    			add_location(li2, file$1, 56, 2, 1751);
+    			add_location(li2, file$1, 57, 2, 1501);
     			attr_dev(h53, "class", "mb-1");
-    			add_location(h53, file$1, 67, 6, 2177);
+    			add_location(h53, file$1, 68, 6, 1927);
     			attr_dev(small6, "class", "text-muted");
-    			add_location(small6, file$1, 68, 6, 2213);
+    			add_location(small6, file$1, 69, 6, 1963);
     			attr_dev(div6, "class", "d-flex w-100 justify-content-between");
-    			add_location(div6, file$1, 66, 4, 2120);
+    			add_location(div6, file$1, 67, 4, 1870);
     			attr_dev(p3, "class", "mb-1");
-    			add_location(p3, file$1, 70, 4, 2269);
+    			add_location(p3, file$1, 71, 4, 2019);
     			attr_dev(small7, "class", "text-muted");
-    			add_location(small7, file$1, 71, 4, 2299);
+    			add_location(small7, file$1, 72, 4, 2049);
     			attr_dev(li3, "class", "list-group-item list-group-item-action");
-    			add_location(li3, file$1, 65, 1, 2064);
+    			add_location(li3, file$1, 66, 1, 1814);
     			attr_dev(div7, "class", "list-group");
     			set_style(div7, "width", "95%");
     			set_style(div7, "margin-left", "2.5%");
     			set_style(div7, "margin-top", "2.5%");
-    			add_location(div7, file$1, 36, 2, 1021);
+    			add_location(div7, file$1, 36, 0, 770);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2443,57 +2443,67 @@ var app = (function () {
     			insert_dev(target, div0, anchor);
     			append_dev(div0, span);
     			append_dev(span, button);
-    			append_dev(button, i);
+    			append_dev(button, i0);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, div1, anchor);
     			insert_dev(target, t1, anchor);
     			insert_dev(target, div2, anchor);
-    			append_dev(div2, label);
-    			append_dev(div2, t3);
     			append_dev(div2, input);
-    			insert_dev(target, t4, anchor);
+    			set_input_value(input, /*ingredient*/ ctx[0]);
+    			append_dev(div2, t2);
+    			append_dev(div2, i1);
+    			insert_dev(target, t3, anchor);
     			insert_dev(target, div7, anchor);
     			append_dev(div7, li0);
     			append_dev(li0, div3);
     			append_dev(div3, h50);
-    			append_dev(div3, t6);
+    			append_dev(div3, t5);
     			append_dev(div3, small0);
-    			append_dev(li0, t8);
+    			append_dev(li0, t7);
     			append_dev(li0, p0);
-    			append_dev(li0, t10);
+    			append_dev(li0, t9);
     			append_dev(li0, small1);
-    			append_dev(div7, t12);
+    			append_dev(div7, t11);
     			append_dev(div7, li1);
     			append_dev(li1, div4);
     			append_dev(div4, h51);
-    			append_dev(div4, t14);
+    			append_dev(div4, t13);
     			append_dev(div4, small2);
-    			append_dev(li1, t16);
+    			append_dev(li1, t15);
     			append_dev(li1, p1);
-    			append_dev(li1, t18);
+    			append_dev(li1, t17);
     			append_dev(li1, small3);
-    			append_dev(div7, t20);
+    			append_dev(div7, t19);
     			append_dev(div7, li2);
     			append_dev(li2, div5);
     			append_dev(div5, h52);
-    			append_dev(div5, t22);
+    			append_dev(div5, t21);
     			append_dev(div5, small4);
-    			append_dev(li2, t24);
+    			append_dev(li2, t23);
     			append_dev(li2, p2);
-    			append_dev(li2, t26);
+    			append_dev(li2, t25);
     			append_dev(li2, small5);
-    			append_dev(div7, t28);
+    			append_dev(div7, t27);
     			append_dev(div7, li3);
     			append_dev(li3, div6);
     			append_dev(div6, h53);
-    			append_dev(div6, t30);
+    			append_dev(div6, t29);
     			append_dev(div6, small6);
-    			append_dev(li3, t32);
+    			append_dev(li3, t31);
     			append_dev(li3, p3);
-    			append_dev(li3, t34);
+    			append_dev(li3, t33);
     			append_dev(li3, small7);
+
+    			if (!mounted) {
+    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[1]);
+    				mounted = true;
+    			}
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*ingredient*/ 1 && input.value !== /*ingredient*/ ctx[0]) {
+    				set_input_value(input, /*ingredient*/ ctx[0]);
+    			}
+    		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
@@ -2502,8 +2512,10 @@ var app = (function () {
     			if (detaching) detach_dev(div1);
     			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(div2);
-    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t3);
     			if (detaching) detach_dev(div7);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -2533,6 +2545,11 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Home> was created with unknown prop '${key}'`);
     	});
 
+    	function input_input_handler() {
+    		ingredient = this.value;
+    		$$invalidate(0, ingredient);
+    	}
+
     	$$self.$capture_state = () => ({
     		link,
     		navigate,
@@ -2542,14 +2559,14 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("ingredient" in $$props) ingredient = $$props.ingredient;
+    		if ("ingredient" in $$props) $$invalidate(0, ingredient = $$props.ingredient);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [];
+    	return [ingredient, input_input_handler];
     }
 
     class Home extends SvelteComponentDev {
