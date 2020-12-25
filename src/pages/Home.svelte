@@ -19,11 +19,21 @@
 
 
   function handleSubmit(ingredient){
-    info = []
-    locations = []
-    alert(ingredient)
+    // info = []
+    // locations = []
     info = ingredientInfo(ingredient)
     locations = searchIngredients(ingredient)
+
+    let infoInfo = info.then(function(result) {
+      console.log(result.name)
+    })
+
+    let locationsInfo = locations.then(function(result) {
+      console.log(result[0][0].name)
+    })
+
+
+    
   }
 
 </script>
@@ -59,7 +69,7 @@
 {#await info then ing}
 {#await locations then store}
   {#each store as shop, i}
-   <li class="list-group-item list-group-item-action" style="z-index: 4">
+   <li class="list-group-item list-group-item-action" style="z-index: 1">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">Shop name: {shop[0].name}</h5>
         <small class="text-muted">distance</small>
