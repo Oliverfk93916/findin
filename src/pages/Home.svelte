@@ -21,19 +21,20 @@
   function handleSubmit(ingredient){
     // info = []
     // locations = []
+    centerMap()
     info = ingredientInfo(ingredient)
     locations = searchIngredients(ingredient)
 
     let infoInfo = info.then(function(result) {
       if (result){
-      alert(result.name)
+      // alert(result.name)
     } else {
       alert('no')
     }
     })
 
     let locationsInfo = locations.then(function(result) {
-      alert(result[0][0].name)
+      // alert(result[0][0].name)
     })
 
 
