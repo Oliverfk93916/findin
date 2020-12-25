@@ -3896,7 +3896,7 @@ var app = (function () {
     	return block;
     }
 
-    // (58:22)  {#await locations then store}
+    // (59:22)  {#await locations then store}
     function create_then_block(ctx) {
     	let await_block_anchor;
     	let promise;
@@ -3947,7 +3947,7 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(58:22)  {#await locations then store}",
+    		source: "(59:22)  {#await locations then store}",
     		ctx
     	});
 
@@ -3969,7 +3969,7 @@ var app = (function () {
     	return block;
     }
 
-    // (59:29)    {#each store as shop, i}
+    // (60:29)    {#each store as shop, i}
     function create_then_block_1(ctx) {
     	let each_1_anchor;
     	let each_value = /*store*/ ctx[6];
@@ -4030,14 +4030,14 @@ var app = (function () {
     		block,
     		id: create_then_block_1.name,
     		type: "then",
-    		source: "(59:29)    {#each store as shop, i}",
+    		source: "(60:29)    {#each store as shop, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (60:2) {#each store as shop, i}
+    // (61:2) {#each store as shop, i}
     function create_each_block(ctx) {
     	let li;
     	let div;
@@ -4079,18 +4079,18 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 62, 8, 1645);
+    			add_location(h5, file$1, 63, 8, 1664);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 63, 8, 1701);
+    			add_location(small0, file$1, 64, 8, 1720);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 61, 6, 1586);
+    			add_location(div, file$1, 62, 6, 1605);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 65, 2, 1757);
+    			add_location(p, file$1, 66, 2, 1776);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 66, 4, 1798);
+    			add_location(small1, file$1, 67, 4, 1817);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
     			set_style(li, "z-index", "4");
-    			add_location(li, file$1, 60, 3, 1509);
+    			add_location(li, file$1, 61, 3, 1528);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4124,7 +4124,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(60:2) {#each store as shop, i}",
+    		source: "(61:2) {#each store as shop, i}",
     		ctx
     	});
 
@@ -4219,32 +4219,32 @@ var app = (function () {
     			div4 = element("div");
     			info_1.block.c();
     			attr_dev(i0, "class", "fas fa-bars menuButton");
-    			add_location(i0, file$1, 32, 2, 736);
+    			add_location(i0, file$1, 33, 2, 755);
     			attr_dev(button0, "class", "menuContainer");
-    			add_location(button0, file$1, 31, 1, 703);
-    			add_location(div0, file$1, 30, 0, 696);
+    			add_location(button0, file$1, 32, 1, 722);
+    			add_location(div0, file$1, 31, 0, 715);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
-    			add_location(div1, file$1, 37, 1, 804);
+    			add_location(div1, file$1, 38, 1, 823);
     			attr_dev(i1, "class", "far fa-compass centerButton");
-    			add_location(i1, file$1, 43, 4, 940);
+    			add_location(i1, file$1, 44, 4, 959);
     			attr_dev(button1, "class", "centerContainer");
-    			add_location(button1, file$1, 42, 2, 882);
-    			add_location(div2, file$1, 41, 0, 874);
+    			add_location(button1, file$1, 43, 2, 901);
+    			add_location(div2, file$1, 42, 0, 893);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			set_style(input, "border-radius", "25px");
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
-    			add_location(input, file$1, 48, 2, 1118);
-    			add_location(button2, file$1, 49, 2, 1256);
+    			add_location(input, file$1, 49, 2, 1137);
+    			add_location(button2, file$1, 50, 2, 1275);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 50, 2, 1312);
+    			add_location(i2, file$1, 51, 2, 1331);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
-    			add_location(div3, file$1, 47, 0, 1026);
+    			add_location(div3, file$1, 48, 0, 1045);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 56, 0, 1387);
+    			add_location(div4, file$1, 57, 0, 1406);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4352,6 +4352,7 @@ var app = (function () {
     	function handleSubmit(ingredient) {
     		$$invalidate(2, info = []);
     		$$invalidate(1, locations = []);
+    		alert("hello");
     		$$invalidate(2, info = ingredientInfo(ingredient));
     		$$invalidate(1, locations = searchIngredients(ingredient));
     	}

@@ -21,6 +21,7 @@
   function handleSubmit(ingredient){
     info = []
     locations = []
+    alert('hello')
     info = ingredientInfo(ingredient)
     locations = searchIngredients(ingredient)
   }
