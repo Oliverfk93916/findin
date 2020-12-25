@@ -51,17 +51,15 @@
 
 <!-- INGREDIENT SEARCH -->
 <div class="input-group mb-3 input-group-lg ingredientInput" style="position: absolute;">
-  <input type="text" class="form-control" style="border-radius: 25px;"id="input" placeholder="Search Ingredient" bind:value={ingredient}>
+  <input type="text" class="form-control" style="border-radius: 25px;"id="input" placeholder="Search Ingredient" bind:value={ingredient} on:input={handleSubmit(ingredient)} >
   <i class="fas fa-search-location inputIcon">
 </div>
-<button on:click={handleSubmit(ingredient)} style="width: 50px; height: 50px;"></button>
 
 
 <!-- STORE LIST -->
 <div class="list-group listContainer">
   {#await info then ing}
     {#await locations then store}
-     <ul>
       {#each store as shop, i}
         <li class="list-group-item list-group-item-action" style="z-index: 1">
         <div class="d-flex w-100 justify-content-between">
@@ -72,11 +70,9 @@
         <small class="text-muted">Size: {ing.size}</small>
         </li>
       {/each}
-    </ul>
     {/await}
   {/await}
 </div>
-<div>{ingredient}</div>
 
 
 

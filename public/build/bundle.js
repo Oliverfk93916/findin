@@ -3668,8 +3668,8 @@ var app = (function () {
     let storeLocations = [];
     async function searchLocations(locations){
 
-    	const response = await axios$1.get(`${url}/locations`).catch(error => console.log(error));
-    	const data = response.data;
+    	let response = await axios$1.get(`${url}/locations`).catch(error => console.log(error));
+    	let data = response.data;
     	let storeLocations = [];
     	for (let x=0; x <locations.length; x++){
     		storeLocations.push(data.filter(item => item.store_id == locations[x]));
@@ -3679,40 +3679,39 @@ var app = (function () {
 
     async function searchInventories(ingredient_id){
     	
-    	const response = await axios$1.get(`${url}/inventories`).catch(error => console.log(error));
-    	const data = response.data;
+    	let response = await axios$1.get(`${url}/inventories`).catch(error => console.log(error));
+    	let data = response.data;
     	let stores = []; 
     	let filteredData = [];
     	filteredData = data.filter(item => item.ingredient_id == ingredient_id && item.status == true);
     	if (filteredData.length == 0){ 
     		console.log('no stores have this in stock');
     	} else {
-    		const locations = filteredData.map(item => item.store_id);
+    		let locations = filteredData.map(item => item.store_id);
     		stores = searchLocations(locations);
     	}
     	return stores
     }
 
     async function searchIngredients(ingredient){
-    	const response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
-    	const data = response.data;
+    	let response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
+    	let data = response.data;
     	let ing = [];
     	let filteredData = [];
     	filteredData = data.filter(item => item.name == ingredient);
     	if (filteredData.length == 0) ; else {
-    		const ingredient_id = filteredData[0].ingredient_id;
+    		let ingredient_id = filteredData[0].ingredient_id;
     		ing = searchInventories(ingredient_id);
     	}
     	return ing
     }
 
     async function ingredientInfo(ingredient){
-    	const response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
-    	const data = response.data;
+    	let response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
+    	let data = response.data;
     	let filteredData = [];
     	filteredData = data.filter(item => item.name == ingredient);
     	return filteredData[0]
-
     }
 
     let brownStyles = [
@@ -3898,7 +3897,7 @@ var app = (function () {
     	return block;
     }
 
-    // (62:24)      {#await locations then store}
+    // (61:24)      {#await locations then store}
     function create_then_block(ctx) {
     	let await_block_anchor;
     	let promise;
@@ -3949,7 +3948,7 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(62:24)      {#await locations then store}",
+    		source: "(61:24)      {#await locations then store}",
     		ctx
     	});
 
@@ -3971,9 +3970,9 @@ var app = (function () {
     	return block;
     }
 
-    // (63:33)       <ul>       {#each store as shop, i}
+    // (62:33)        {#each store as shop, i}
     function create_then_block_1(ctx) {
-    	let ul;
+    	let each_1_anchor;
     	let each_value = /*store*/ ctx[6];
     	validate_each_argument(each_value);
     	let each_blocks = [];
@@ -3984,20 +3983,18 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			ul = element("ul");
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			add_location(ul, file$1, 63, 5, 1633);
+    			each_1_anchor = empty();
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, ul, anchor);
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(ul, null);
+    				each_blocks[i].m(target, anchor);
     			}
+
+    			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
     			if (dirty & /*info, locations*/ 6) {
@@ -4013,7 +4010,7 @@ var app = (function () {
     					} else {
     						each_blocks[i] = create_each_block(child_ctx);
     						each_blocks[i].c();
-    						each_blocks[i].m(ul, null);
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
     					}
     				}
 
@@ -4025,8 +4022,8 @@ var app = (function () {
     			}
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(ul);
     			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
 
@@ -4034,14 +4031,14 @@ var app = (function () {
     		block,
     		id: create_then_block_1.name,
     		type: "then",
-    		source: "(63:33)       <ul>       {#each store as shop, i}",
+    		source: "(62:33)        {#each store as shop, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (65:6) {#each store as shop, i}
+    // (63:6) {#each store as shop, i}
     function create_each_block(ctx) {
     	let li;
     	let div;
@@ -4083,18 +4080,18 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 67, 10, 1817);
+    			add_location(h5, file$1, 65, 10, 1755);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 68, 10, 1875);
+    			add_location(small0, file$1, 66, 10, 1813);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 66, 8, 1756);
+    			add_location(div, file$1, 64, 8, 1694);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 70, 8, 1941);
+    			add_location(p, file$1, 68, 8, 1879);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 71, 8, 1986);
+    			add_location(small1, file$1, 69, 8, 1924);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
     			set_style(li, "z-index", "1");
-    			add_location(li, file$1, 65, 8, 1677);
+    			add_location(li, file$1, 63, 8, 1615);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4128,7 +4125,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(65:6) {#each store as shop, i}",
+    		source: "(63:6) {#each store as shop, i}",
     		ctx
     	});
 
@@ -4181,13 +4178,8 @@ var app = (function () {
     	let t3;
     	let i2;
     	let t4;
-    	let button2;
-    	let t5;
     	let div4;
     	let promise;
-    	let t6;
-    	let div5;
-    	let t7;
     	let mounted;
     	let dispose;
 
@@ -4221,13 +4213,8 @@ var app = (function () {
     			t3 = space();
     			i2 = element("i");
     			t4 = space();
-    			button2 = element("button");
-    			t5 = space();
     			div4 = element("div");
     			info_1.block.c();
-    			t6 = space();
-    			div5 = element("div");
-    			t7 = text(/*ingredient*/ ctx[0]);
     			attr_dev(i0, "class", "fas fa-bars menuButton");
     			add_location(i0, file$1, 36, 2, 846);
     			attr_dev(button0, "class", "menuContainer");
@@ -4248,16 +4235,12 @@ var app = (function () {
     			attr_dev(input, "placeholder", "Search Ingredient");
     			add_location(input, file$1, 53, 2, 1229);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 54, 2, 1367);
+    			add_location(i2, file$1, 54, 2, 1404);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
     			add_location(div3, file$1, 52, 0, 1137);
-    			set_style(button2, "width", "50px");
-    			set_style(button2, "height", "50px");
-    			add_location(button2, file$1, 56, 0, 1419);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 60, 0, 1530);
-    			add_location(div5, file$1, 78, 0, 2106);
+    			add_location(div4, file$1, 59, 0, 1478);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4279,23 +4262,18 @@ var app = (function () {
     			append_dev(div3, t3);
     			append_dev(div3, i2);
     			insert_dev(target, t4, anchor);
-    			insert_dev(target, button2, anchor);
-    			insert_dev(target, t5, anchor);
     			insert_dev(target, div4, anchor);
     			info_1.block.m(div4, info_1.anchor = null);
     			info_1.mount = () => div4;
     			info_1.anchor = null;
-    			insert_dev(target, t6, anchor);
-    			insert_dev(target, div5, anchor);
-    			append_dev(div5, t7);
 
     			if (!mounted) {
     				dispose = [
     					listen_dev(button1, "click", centerMap, false, false, false),
     					listen_dev(input, "input", /*input_input_handler*/ ctx[4]),
     					listen_dev(
-    						button2,
-    						"click",
+    						input,
+    						"input",
     						function () {
     							if (is_function(/*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]))) /*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]).apply(this, arguments);
     						},
@@ -4322,8 +4300,6 @@ var app = (function () {
     				child_ctx[5] = info_1.resolved;
     				info_1.block.p(child_ctx, dirty);
     			}
-
-    			if (dirty & /*ingredient*/ 1) set_data_dev(t7, /*ingredient*/ ctx[0]);
     		},
     		i: noop,
     		o: noop,
@@ -4336,14 +4312,10 @@ var app = (function () {
     			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div3);
     			if (detaching) detach_dev(t4);
-    			if (detaching) detach_dev(button2);
-    			if (detaching) detach_dev(t5);
     			if (detaching) detach_dev(div4);
     			info_1.block.d();
     			info_1.token = null;
     			info_1 = null;
-    			if (detaching) detach_dev(t6);
-    			if (detaching) detach_dev(div5);
     			mounted = false;
     			run_all(dispose);
     		}
