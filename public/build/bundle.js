@@ -3896,7 +3896,7 @@ var app = (function () {
     	return block;
     }
 
-    // (57:22)  {#await locations then store}
+    // (58:22)  {#await locations then store}
     function create_then_block(ctx) {
     	let await_block_anchor;
     	let promise;
@@ -3947,7 +3947,7 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(57:22)  {#await locations then store}",
+    		source: "(58:22)  {#await locations then store}",
     		ctx
     	});
 
@@ -3969,7 +3969,7 @@ var app = (function () {
     	return block;
     }
 
-    // (58:29)    {#each store as shop, i}
+    // (59:29)    {#each store as shop, i}
     function create_then_block_1(ctx) {
     	let each_1_anchor;
     	let each_value = /*store*/ ctx[6];
@@ -4030,14 +4030,14 @@ var app = (function () {
     		block,
     		id: create_then_block_1.name,
     		type: "then",
-    		source: "(58:29)    {#each store as shop, i}",
+    		source: "(59:29)    {#each store as shop, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (59:2) {#each store as shop, i}
+    // (60:2) {#each store as shop, i}
     function create_each_block(ctx) {
     	let li;
     	let div;
@@ -4079,17 +4079,17 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 61, 8, 1606);
+    			add_location(h5, file$1, 62, 8, 1626);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 62, 8, 1662);
+    			add_location(small0, file$1, 63, 8, 1682);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 60, 6, 1547);
+    			add_location(div, file$1, 61, 6, 1567);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 64, 2, 1718);
+    			add_location(p, file$1, 65, 2, 1738);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 65, 4, 1759);
+    			add_location(small1, file$1, 66, 4, 1779);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
-    			add_location(li, file$1, 59, 3, 1489);
+    			add_location(li, file$1, 60, 3, 1509);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4123,7 +4123,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(59:2) {#each store as shop, i}",
+    		source: "(60:2) {#each store as shop, i}",
     		ctx
     	});
 
@@ -4174,8 +4174,10 @@ var app = (function () {
     	let div3;
     	let input;
     	let t3;
-    	let i2;
+    	let button2;
     	let t4;
+    	let i2;
+    	let t5;
     	let div4;
     	let promise;
     	let mounted;
@@ -4209,8 +4211,10 @@ var app = (function () {
     			div3 = element("div");
     			input = element("input");
     			t3 = space();
-    			i2 = element("i");
+    			button2 = element("button");
     			t4 = space();
+    			i2 = element("i");
+    			t5 = space();
     			div4 = element("div");
     			info_1.block.c();
     			attr_dev(i0, "class", "fas fa-bars menuButton");
@@ -4232,13 +4236,14 @@ var app = (function () {
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
     			add_location(input, file$1, 48, 2, 1118);
+    			add_location(button2, file$1, 49, 2, 1256);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 49, 2, 1292);
+    			add_location(i2, file$1, 50, 2, 1312);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
     			add_location(div3, file$1, 47, 0, 1026);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 55, 0, 1367);
+    			add_location(div4, file$1, 56, 0, 1387);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4258,8 +4263,10 @@ var app = (function () {
     			append_dev(div3, input);
     			set_input_value(input, /*ingredient*/ ctx[0]);
     			append_dev(div3, t3);
+    			append_dev(div3, button2);
+    			append_dev(div3, t4);
     			append_dev(div3, i2);
-    			insert_dev(target, t4, anchor);
+    			insert_dev(target, t5, anchor);
     			insert_dev(target, div4, anchor);
     			info_1.block.m(div4, info_1.anchor = null);
     			info_1.mount = () => div4;
@@ -4270,8 +4277,8 @@ var app = (function () {
     					listen_dev(button1, "click", centerMap, false, false, false),
     					listen_dev(input, "input", /*input_input_handler*/ ctx[4]),
     					listen_dev(
-    						input,
-    						"input",
+    						button2,
+    						"click",
     						function () {
     							if (is_function(/*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]))) /*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]).apply(this, arguments);
     						},
@@ -4309,7 +4316,7 @@ var app = (function () {
     			if (detaching) detach_dev(div2);
     			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div3);
-    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t5);
     			if (detaching) detach_dev(div4);
     			info_1.block.d();
     			info_1.token = null;

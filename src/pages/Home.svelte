@@ -46,7 +46,8 @@
 </div>
 <!-- INGREDIENT SEARCH -->
 <div class="input-group mb-3 input-group-lg ingredientInput" style="position: absolute;">
-  <input type="text" class="form-control" style="border-radius: 25px;"id="input" placeholder="Search Ingredient" bind:value={ingredient} on:input={handleSubmit(ingredient)}>
+  <input type="text" class="form-control" style="border-radius: 25px;"id="input" placeholder="Search Ingredient" bind:value={ingredient}>
+  <button on:click={handleSubmit(ingredient)}></button>
   <i class="fas fa-search-location inputIcon">
 </div>
 
