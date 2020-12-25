@@ -25,11 +25,11 @@
     locations = searchIngredients(ingredient)
 
     let infoInfo = info.then(function(result) {
-      console.log(result.name)
+      alert(result.name)
     })
 
     let locationsInfo = locations.then(function(result) {
-      console.log(result[0][0].name)
+      alert(result[0][0].name)
     })
 
 
