@@ -7,10 +7,9 @@
   import {ingredientInfo} from '../store/ingredientInfo'
 
 	//map styles
-	import homeMap, {centerMap} from '../components/Map/homeMap'
+	import homeMap, {distance, centerMap, createLocationMarkers, drawPath, clearMarkers} from '../components/Map/homeMap'
 
 	let ingredient
-
   let locations = searchIngredients(ingredient)
   let info = ingredientInfo(ingredient)
 
@@ -20,14 +19,33 @@
 
 
   function handleSubmit(ingredient){
-    // GET RESULTS FROM PROMISE
-    // let locationsInfo = locations.then(function(result) {
-    //   console.log(result.length)
-    // })  
-
     info = ingredientInfo(ingredient)
     locations = searchIngredients(ingredient)
+
+    locations.then(function(result) {
+      if (result.length != 0) {
+         createLocationMarkers(result)
+      } else {
+        clearMarkers()
+      }
+    })  
   }
+
+  function getDistance (id){
+    for (let x = 0; x < distance.length; x++){
+      if (distance[x].id == id){
+        return distance[x].distance
+      }
+    }
+    // return hello.newLat
+  }
+
+  function routeMe(one, two) {
+    drawPath(one, two)
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+
 
 </script>
 
@@ -61,10 +79,10 @@
   {#await info then ing}
     {#await locations then store}
       {#each store as shop, i}
-        <li class="list-group-item list-group-item-action" style="z-index: 1">
+        <li class="list-group-item list-group-item-action" id ={shop[0].id} style="z-index: 1" on:click|preventDefault={() => routeMe(shop[0].lat,shop[0].lng)}>
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">Shop name: {shop[0].name}</h5>
-          <small class="text-muted">distance</small>
+          <small class="text-muted">{getDistance(shop[0].id)}m</small>
         </div>
         <p class="mb-1">Name: {ing.name}</p>
         <small class="text-muted">Size: {ing.size}</small>
@@ -73,7 +91,6 @@
     {/await}
   {/await}
 </div>
-
 
 
 
