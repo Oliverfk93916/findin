@@ -4081,18 +4081,18 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 66, 10, 1808);
+    			add_location(h5, file$1, 66, 10, 1820);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 67, 10, 1866);
+    			add_location(small0, file$1, 67, 10, 1878);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 65, 8, 1747);
+    			add_location(div, file$1, 65, 8, 1759);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 69, 8, 1932);
+    			add_location(p, file$1, 69, 8, 1944);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 70, 8, 1977);
+    			add_location(small1, file$1, 70, 8, 1989);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
     			set_style(li, "z-index", "1");
-    			add_location(li, file$1, 64, 8, 1668);
+    			add_location(li, file$1, 64, 8, 1680);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4177,9 +4177,9 @@ var app = (function () {
     	let div3;
     	let input;
     	let t3;
-    	let button2;
-    	let t4;
     	let i2;
+    	let t4;
+    	let button2;
     	let t5;
     	let div4;
     	let promise;
@@ -4214,9 +4214,9 @@ var app = (function () {
     			div3 = element("div");
     			input = element("input");
     			t3 = space();
-    			button2 = element("button");
-    			t4 = space();
     			i2 = element("i");
+    			t4 = space();
+    			button2 = element("button");
     			t5 = space();
     			div4 = element("div");
     			info_1.block.c();
@@ -4239,15 +4239,16 @@ var app = (function () {
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
     			add_location(input, file$1, 53, 2, 1242);
-    			set_style(button2, "width", "50px");
-    			add_location(button2, file$1, 54, 2, 1380);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 55, 2, 1457);
+    			add_location(i2, file$1, 54, 2, 1380);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
     			add_location(div3, file$1, 52, 0, 1150);
+    			set_style(button2, "width", "50px");
+    			set_style(button2, "height", "50px");
+    			add_location(button2, file$1, 56, 0, 1432);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 60, 0, 1531);
+    			add_location(div4, file$1, 60, 0, 1543);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4267,9 +4268,9 @@ var app = (function () {
     			append_dev(div3, input);
     			set_input_value(input, /*ingredient*/ ctx[0]);
     			append_dev(div3, t3);
-    			append_dev(div3, button2);
-    			append_dev(div3, t4);
     			append_dev(div3, i2);
+    			insert_dev(target, t4, anchor);
+    			insert_dev(target, button2, anchor);
     			insert_dev(target, t5, anchor);
     			insert_dev(target, div4, anchor);
     			info_1.block.m(div4, info_1.anchor = null);
@@ -4320,6 +4321,8 @@ var app = (function () {
     			if (detaching) detach_dev(div2);
     			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div3);
+    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(button2);
     			if (detaching) detach_dev(t5);
     			if (detaching) detach_dev(div4);
     			info_1.block.d();

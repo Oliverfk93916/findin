@@ -52,9 +52,9 @@
 <!-- INGREDIENT SEARCH -->
 <div class="input-group mb-3 input-group-lg ingredientInput" style="position: absolute;">
   <input type="text" class="form-control" style="border-radius: 25px;"id="input" placeholder="Search Ingredient" bind:value={ingredient}>
-  <button on:click={handleSubmit(ingredient)} style="width: 50px;"></button>
   <i class="fas fa-search-location inputIcon">
 </div>
+<button on:click={handleSubmit(ingredient)} style="width: 50px; height: 50px;"></button>
 
 
 <!-- STORE LIST -->
