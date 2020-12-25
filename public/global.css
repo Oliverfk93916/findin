@@ -109,7 +109,7 @@ a[href^="http://maps.google.com/maps"]{display:none !important}
 
 
 .centerContainer {
-	position: fixed;
+	position: absolute;
 	margin-top: -17%;
 	margin-left:85%;
 	z-index: 2;
