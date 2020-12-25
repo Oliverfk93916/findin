@@ -4079,16 +4079,17 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 62, 8, 1626);
+    			add_location(h5, file$1, 62, 8, 1645);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 63, 8, 1682);
+    			add_location(small0, file$1, 63, 8, 1701);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 61, 6, 1567);
+    			add_location(div, file$1, 61, 6, 1586);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 65, 2, 1738);
+    			add_location(p, file$1, 65, 2, 1757);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 66, 4, 1779);
+    			add_location(small1, file$1, 66, 4, 1798);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
+    			set_style(li, "z-index", "4");
     			add_location(li, file$1, 60, 3, 1509);
     		},
     		m: function mount(target, anchor) {
