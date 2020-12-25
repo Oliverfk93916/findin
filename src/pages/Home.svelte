@@ -76,6 +76,7 @@
     {/await}
   {/await}
 </div>
+<div>{ingredient}</div>
 
 
 

@@ -4185,6 +4185,9 @@ var app = (function () {
     	let t5;
     	let div4;
     	let promise;
+    	let t6;
+    	let div5;
+    	let t7;
     	let mounted;
     	let dispose;
 
@@ -4222,6 +4225,9 @@ var app = (function () {
     			t5 = space();
     			div4 = element("div");
     			info_1.block.c();
+    			t6 = space();
+    			div5 = element("div");
+    			t7 = text(/*ingredient*/ ctx[0]);
     			attr_dev(i0, "class", "fas fa-bars menuButton");
     			add_location(i0, file$1, 36, 2, 846);
     			attr_dev(button0, "class", "menuContainer");
@@ -4251,6 +4257,7 @@ var app = (function () {
     			add_location(button2, file$1, 56, 0, 1419);
     			attr_dev(div4, "class", "list-group listContainer");
     			add_location(div4, file$1, 60, 0, 1530);
+    			add_location(div5, file$1, 78, 0, 2106);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4278,6 +4285,9 @@ var app = (function () {
     			info_1.block.m(div4, info_1.anchor = null);
     			info_1.mount = () => div4;
     			info_1.anchor = null;
+    			insert_dev(target, t6, anchor);
+    			insert_dev(target, div5, anchor);
+    			append_dev(div5, t7);
 
     			if (!mounted) {
     				dispose = [
@@ -4312,6 +4322,8 @@ var app = (function () {
     				child_ctx[5] = info_1.resolved;
     				info_1.block.p(child_ctx, dirty);
     			}
+
+    			if (dirty & /*ingredient*/ 1) set_data_dev(t7, /*ingredient*/ ctx[0]);
     		},
     		i: noop,
     		o: noop,
@@ -4330,6 +4342,8 @@ var app = (function () {
     			info_1.block.d();
     			info_1.token = null;
     			info_1 = null;
+    			if (detaching) detach_dev(t6);
+    			if (detaching) detach_dev(div5);
     			mounted = false;
     			run_all(dispose);
     		}
