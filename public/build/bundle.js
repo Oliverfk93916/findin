@@ -4079,17 +4079,17 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 59, 8, 1574);
+    			add_location(h5, file$1, 59, 8, 1611);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 60, 8, 1630);
+    			add_location(small0, file$1, 60, 8, 1667);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 58, 6, 1515);
+    			add_location(div, file$1, 58, 6, 1552);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 62, 2, 1686);
+    			add_location(p, file$1, 62, 2, 1723);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 63, 4, 1727);
+    			add_location(small1, file$1, 63, 4, 1764);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
-    			add_location(li, file$1, 57, 3, 1457);
+    			add_location(li, file$1, 57, 3, 1494);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4233,12 +4233,12 @@ var app = (function () {
     			attr_dev(input, "placeholder", "Search Ingredient");
     			add_location(input, file$1, 46, 2, 1085);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 47, 2, 1260);
+    			add_location(i2, file$1, 47, 2, 1297);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
     			add_location(div3, file$1, 45, 0, 993);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 53, 0, 1335);
+    			add_location(div4, file$1, 53, 0, 1372);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4272,6 +4272,16 @@ var app = (function () {
     					listen_dev(
     						input,
     						"change",
+    						function () {
+    							if (is_function(/*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]))) /*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]).apply(this, arguments);
+    						},
+    						false,
+    						false,
+    						false
+    					),
+    					listen_dev(
+    						input,
+    						"submit",
     						function () {
     							if (is_function(/*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]))) /*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]).apply(this, arguments);
     						},
