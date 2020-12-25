@@ -9,7 +9,7 @@
 	//map styles
 	import homeMap, {centerMap} from '../components/Map/homeMap'
 
-	let ingredient, shop, store
+	let ingredient
 
   let locations = searchIngredients(ingredient)
   let info = ingredientInfo(ingredient)
@@ -61,6 +61,7 @@
 <div class="list-group listContainer">
   {#await info then ing}
     {#await locations then store}
+     <ul>
       {#each store as shop, i}
         <li class="list-group-item list-group-item-action" style="z-index: 1">
         <div class="d-flex w-100 justify-content-between">
@@ -71,6 +72,7 @@
         <small class="text-muted">Size: {ing.size}</small>
         </li>
       {/each}
+    </ul>
     {/await}
   {/await}
 </div>

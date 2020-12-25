@@ -3878,7 +3878,7 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[4] = list[i];
+    	child_ctx[7] = list[i];
     	child_ctx[9] = i;
     	return child_ctx;
     }
@@ -3911,7 +3911,7 @@ var app = (function () {
     		pending: create_pending_block_1,
     		then: create_then_block_1,
     		catch: create_catch_block,
-    		value: 5
+    		value: 6
     	};
 
     	handle_promise(promise = /*locations*/ ctx[1], info_1);
@@ -3933,7 +3933,7 @@ var app = (function () {
 
     			if (dirty & /*locations*/ 2 && promise !== (promise = /*locations*/ ctx[1]) && handle_promise(promise, info_1)) ; else {
     				const child_ctx = ctx.slice();
-    				child_ctx[5] = info_1.resolved;
+    				child_ctx[6] = info_1.resolved;
     				info_1.block.p(child_ctx, dirty);
     			}
     		},
@@ -3971,10 +3971,10 @@ var app = (function () {
     	return block;
     }
 
-    // (63:33)        {#each store as shop, i}
+    // (63:33)       <ul>       {#each store as shop, i}
     function create_then_block_1(ctx) {
-    	let each_1_anchor;
-    	let each_value = /*store*/ ctx[5];
+    	let ul;
+    	let each_value = /*store*/ ctx[6];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -3984,22 +3984,24 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			ul = element("ul");
+
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			each_1_anchor = empty();
+    			add_location(ul, file$1, 63, 5, 1633);
     		},
     		m: function mount(target, anchor) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
+    			insert_dev(target, ul, anchor);
 
-    			insert_dev(target, each_1_anchor, anchor);
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(ul, null);
+    			}
     		},
     		p: function update(ctx, dirty) {
     			if (dirty & /*info, locations*/ 6) {
-    				each_value = /*store*/ ctx[5];
+    				each_value = /*store*/ ctx[6];
     				validate_each_argument(each_value);
     				let i;
 
@@ -4011,7 +4013,7 @@ var app = (function () {
     					} else {
     						each_blocks[i] = create_each_block(child_ctx);
     						each_blocks[i].c();
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    						each_blocks[i].m(ul, null);
     					}
     				}
 
@@ -4023,8 +4025,8 @@ var app = (function () {
     			}
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ul);
     			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
 
@@ -4032,32 +4034,32 @@ var app = (function () {
     		block,
     		id: create_then_block_1.name,
     		type: "then",
-    		source: "(63:33)        {#each store as shop, i}",
+    		source: "(63:33)       <ul>       {#each store as shop, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (64:6) {#each store as shop, i}
+    // (65:6) {#each store as shop, i}
     function create_each_block(ctx) {
     	let li;
     	let div;
     	let h5;
     	let t0;
-    	let t1_value = /*shop*/ ctx[4][0].name + "";
+    	let t1_value = /*shop*/ ctx[7][0].name + "";
     	let t1;
     	let t2;
     	let small0;
     	let t4;
     	let p;
     	let t5;
-    	let t6_value = /*ing*/ ctx[7].name + "";
+    	let t6_value = /*ing*/ ctx[5].name + "";
     	let t6;
     	let t7;
     	let small1;
     	let t8;
-    	let t9_value = /*ing*/ ctx[7].size + "";
+    	let t9_value = /*ing*/ ctx[5].size + "";
     	let t9;
     	let t10;
 
@@ -4081,18 +4083,18 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 66, 10, 1820);
+    			add_location(h5, file$1, 67, 10, 1817);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 67, 10, 1878);
+    			add_location(small0, file$1, 68, 10, 1875);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 65, 8, 1759);
+    			add_location(div, file$1, 66, 8, 1756);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 69, 8, 1944);
+    			add_location(p, file$1, 70, 8, 1941);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 70, 8, 1989);
+    			add_location(small1, file$1, 71, 8, 1986);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
     			set_style(li, "z-index", "1");
-    			add_location(li, file$1, 64, 8, 1680);
+    			add_location(li, file$1, 65, 8, 1677);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4113,9 +4115,9 @@ var app = (function () {
     			append_dev(li, t10);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*locations*/ 2 && t1_value !== (t1_value = /*shop*/ ctx[4][0].name + "")) set_data_dev(t1, t1_value);
-    			if (dirty & /*info*/ 4 && t6_value !== (t6_value = /*ing*/ ctx[7].name + "")) set_data_dev(t6, t6_value);
-    			if (dirty & /*info*/ 4 && t9_value !== (t9_value = /*ing*/ ctx[7].size + "")) set_data_dev(t9, t9_value);
+    			if (dirty & /*locations*/ 2 && t1_value !== (t1_value = /*shop*/ ctx[7][0].name + "")) set_data_dev(t1, t1_value);
+    			if (dirty & /*info*/ 4 && t6_value !== (t6_value = /*ing*/ ctx[5].name + "")) set_data_dev(t6, t6_value);
+    			if (dirty & /*info*/ 4 && t9_value !== (t9_value = /*ing*/ ctx[5].size + "")) set_data_dev(t9, t9_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(li);
@@ -4126,7 +4128,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(64:6) {#each store as shop, i}",
+    		source: "(65:6) {#each store as shop, i}",
     		ctx
     	});
 
@@ -4194,7 +4196,7 @@ var app = (function () {
     		pending: create_pending_block,
     		then: create_then_block,
     		catch: create_catch_block_1,
-    		value: 7
+    		value: 5
     	};
 
     	handle_promise(promise = /*info*/ ctx[2], info_1);
@@ -4221,34 +4223,34 @@ var app = (function () {
     			div4 = element("div");
     			info_1.block.c();
     			attr_dev(i0, "class", "fas fa-bars menuButton");
-    			add_location(i0, file$1, 36, 2, 859);
+    			add_location(i0, file$1, 36, 2, 846);
     			attr_dev(button0, "class", "menuContainer");
-    			add_location(button0, file$1, 35, 1, 826);
-    			add_location(div0, file$1, 34, 0, 819);
+    			add_location(button0, file$1, 35, 1, 813);
+    			add_location(div0, file$1, 34, 0, 806);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
-    			add_location(div1, file$1, 41, 1, 927);
+    			add_location(div1, file$1, 41, 1, 914);
     			attr_dev(i1, "class", "far fa-compass centerButton");
-    			add_location(i1, file$1, 47, 4, 1063);
+    			add_location(i1, file$1, 47, 4, 1050);
     			attr_dev(button1, "class", "centerContainer");
-    			add_location(button1, file$1, 46, 2, 1005);
-    			add_location(div2, file$1, 45, 0, 997);
+    			add_location(button1, file$1, 46, 2, 992);
+    			add_location(div2, file$1, 45, 0, 984);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			set_style(input, "border-radius", "25px");
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
-    			add_location(input, file$1, 53, 2, 1242);
+    			add_location(input, file$1, 53, 2, 1229);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 54, 2, 1380);
+    			add_location(i2, file$1, 54, 2, 1367);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
-    			add_location(div3, file$1, 52, 0, 1150);
+    			add_location(div3, file$1, 52, 0, 1137);
     			set_style(button2, "width", "50px");
     			set_style(button2, "height", "50px");
-    			add_location(button2, file$1, 56, 0, 1432);
+    			add_location(button2, file$1, 56, 0, 1419);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 60, 0, 1543);
+    			add_location(div4, file$1, 60, 0, 1530);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4280,7 +4282,7 @@ var app = (function () {
     			if (!mounted) {
     				dispose = [
     					listen_dev(button1, "click", centerMap, false, false, false),
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[6]),
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[4]),
     					listen_dev(
     						button2,
     						"click",
@@ -4307,7 +4309,7 @@ var app = (function () {
 
     			if (dirty & /*info*/ 4 && promise !== (promise = /*info*/ ctx[2]) && handle_promise(promise, info_1)) ; else {
     				const child_ctx = ctx.slice();
-    				child_ctx[7] = info_1.resolved;
+    				child_ctx[5] = info_1.resolved;
     				info_1.block.p(child_ctx, dirty);
     			}
     		},
@@ -4347,7 +4349,7 @@ var app = (function () {
     function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Home", slots, []);
-    	let ingredient, shop, store;
+    	let ingredient;
     	let locations = searchIngredients(ingredient);
     	let info = ingredientInfo(ingredient);
 
@@ -4388,8 +4390,6 @@ var app = (function () {
     		homeMap: mapCurrentLocation,
     		centerMap,
     		ingredient,
-    		shop,
-    		store,
     		locations,
     		info,
     		handleSubmit
@@ -4397,8 +4397,6 @@ var app = (function () {
 
     	$$self.$inject_state = $$props => {
     		if ("ingredient" in $$props) $$invalidate(0, ingredient = $$props.ingredient);
-    		if ("shop" in $$props) $$invalidate(4, shop = $$props.shop);
-    		if ("store" in $$props) $$invalidate(5, store = $$props.store);
     		if ("locations" in $$props) $$invalidate(1, locations = $$props.locations);
     		if ("info" in $$props) $$invalidate(2, info = $$props.info);
     	};
@@ -4407,7 +4405,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [ingredient, locations, info, handleSubmit, shop, store, input_input_handler];
+    	return [ingredient, locations, info, handleSubmit, input_input_handler];
     }
 
     class Home extends SvelteComponentDev {
