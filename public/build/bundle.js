@@ -4079,18 +4079,18 @@ var app = (function () {
     			t9 = text(t9_value);
     			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 63, 8, 1664);
+    			add_location(h5, file$1, 63, 8, 1667);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 64, 8, 1720);
+    			add_location(small0, file$1, 64, 8, 1723);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 62, 6, 1605);
+    			add_location(div, file$1, 62, 6, 1608);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 66, 2, 1776);
+    			add_location(p, file$1, 66, 2, 1779);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 67, 4, 1817);
+    			add_location(small1, file$1, 67, 4, 1820);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
     			set_style(li, "z-index", "4");
-    			add_location(li, file$1, 61, 3, 1528);
+    			add_location(li, file$1, 61, 3, 1531);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4219,32 +4219,32 @@ var app = (function () {
     			div4 = element("div");
     			info_1.block.c();
     			attr_dev(i0, "class", "fas fa-bars menuButton");
-    			add_location(i0, file$1, 33, 2, 755);
+    			add_location(i0, file$1, 33, 2, 758);
     			attr_dev(button0, "class", "menuContainer");
-    			add_location(button0, file$1, 32, 1, 722);
-    			add_location(div0, file$1, 31, 0, 715);
+    			add_location(button0, file$1, 32, 1, 725);
+    			add_location(div0, file$1, 31, 0, 718);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
-    			add_location(div1, file$1, 38, 1, 823);
+    			add_location(div1, file$1, 38, 1, 826);
     			attr_dev(i1, "class", "far fa-compass centerButton");
-    			add_location(i1, file$1, 44, 4, 959);
+    			add_location(i1, file$1, 44, 4, 962);
     			attr_dev(button1, "class", "centerContainer");
-    			add_location(button1, file$1, 43, 2, 901);
-    			add_location(div2, file$1, 42, 0, 893);
+    			add_location(button1, file$1, 43, 2, 904);
+    			add_location(div2, file$1, 42, 0, 896);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			set_style(input, "border-radius", "25px");
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
-    			add_location(input, file$1, 49, 2, 1137);
-    			add_location(button2, file$1, 50, 2, 1275);
+    			add_location(input, file$1, 49, 2, 1140);
+    			add_location(button2, file$1, 50, 2, 1278);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 51, 2, 1331);
+    			add_location(i2, file$1, 51, 2, 1334);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
-    			add_location(div3, file$1, 48, 0, 1045);
+    			add_location(div3, file$1, 48, 0, 1048);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 57, 0, 1406);
+    			add_location(div4, file$1, 57, 0, 1409);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4352,7 +4352,7 @@ var app = (function () {
     	function handleSubmit(ingredient) {
     		$$invalidate(2, info = []);
     		$$invalidate(1, locations = []);
-    		alert("hello");
+    		alert(ingredient);
     		$$invalidate(2, info = ingredientInfo(ingredient));
     		$$invalidate(1, locations = searchIngredients(ingredient));
     	}
