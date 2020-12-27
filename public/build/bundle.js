@@ -3718,7 +3718,27 @@ var app = (function () {
     	let data = response.data;
     	let filteredData = [];
     	filteredData = data.filter(item => item.name == ingredient);
-    	return filteredData[0]
+    	if (filteredData.length != 0){
+    		return filteredData[0]
+    	} 
+    	// else {
+    	// 	return []
+    	// }
+    }
+
+    // let locationsDistanceObj
+
+    function orderByDistance(result, distances){
+    	let trial = [];
+    	for(var x = 0; x < result.length; x++){
+        	trial.push(result[x][0]);
+        }
+        let locationsDistanceObj = trial.map(rslt => Object.assign({}, rslt, {
+          distance: distances.filter(dst => dst.id === rslt.id).map(dst => dst.distance)
+          })
+        );
+        locationsDistanceObj.sort((a,b) => parseFloat(a.distance[0]) - parseFloat(b.distance[0]));
+        return locationsDistanceObj
     }
 
     let brownStyles = [
@@ -3852,32 +3872,41 @@ var app = (function () {
     let clicked = false;
     let map, myLocation, latlngBounds;
     let markers = [];
-    let distanceObj = [];
     let directionsDisplay = new google.maps.DirectionsRenderer();
     let distance = [];
 
     // EXPORT FUNCTIONS
+
+    // Draws current location on map (currently hardcoded to my house)
     function mapCurrentLocation(){
+
+    	//Creates location
     	myLocation = new google.maps.LatLng(lat, lng);
+
+    	//Creates default map with styling
     	map = new google.maps.Map(document.getElementById('interactiveMap'), {
-    				center: new google.maps.LatLng(lat,lng),
-    				disableDefaultUI: true,
-    				zoom: 17,
-    				mapTypeId: google.maps.MapTypeId.ROADMAP,
-    				styles: brownStyles,
+    		center: new google.maps.LatLng(lat,lng),
+    		disableDefaultUI: true,
+    		zoom: 17,
+    		mapTypeId: google.maps.MapTypeId.ROADMAP,
+    		styles: brownStyles,
     	});
+
+    	//Creates marker on default map
     	let marker = new google.maps.Marker({
-    				position: myLocation,
-    				map: map,
-    				title: "You are Here",
-    				animation: google.maps.Animation.DROP,
-    				// icon: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png'
-
+    		position: myLocation,
+    		map: map,
+    		title: "You are Here",
+    		animation: google.maps.Animation.DROP,
+    		// icon: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png'
     	});
+
+    	//Creates Info window with content
     	let info = new google.maps.InfoWindow({
-    				content: "Current Location"
+    		content: "Current Location"
     	});
 
+    	//Lets the info window appear and close on click
     	google.maps.event.addListener(marker, "click", function(){
     		clicked = ! clicked; 
     		if (clicked == true) {
@@ -3887,7 +3916,8 @@ var app = (function () {
     		}
     	});
     }
-
+    	
+    //Centers the map and resets the zoom
     function centerMap() {
     	map.setCenter({
     		lat: lat,
@@ -3896,24 +3926,42 @@ var app = (function () {
     	map.setZoom(17);
     }
 
+    //Takes in an array of objects clears current markers and sets new ones
     function createLocationMarkers(latLng){
+
+    	//Initiates map bounds
     	latlngBounds = new google.maps.LatLngBounds();
+
+    	//Clears all current markers
     	clearMarkers();
+
+    	let distanceObj = [];
+    	distance = [];
+    	//Loop through array and create markers
     	for (var x =0; x < latLng.length;x++){
     		let locationLat = latLng[x][0].lat;
     		let locationLng = latLng[x][0].lng;
     		let locationName = latLng[x][0].name;
+
+    		//Use lat, lng and name to create markers function
     		createMarkers(locationLat, locationLng, locationName);
+
+    		//Consolidate information needed to calculate distance into the distanceObj
     		distanceObj.push({
     			id: latLng[x][0].id,
     			currentLat: lat,
-    			currentLng:lng,
+    			currentLng: lng,
     			newLat: locationLat,
     			newLng: locationLng
     		});
+
+    		//Use information in object to return distance and id from Calculate Distance function
     		distance.push(calculateDistance(distanceObj[x]));
     	}
+
+    	//Resize map to fit all bounds
     	map.fitBounds(latlngBounds);
+    	return distance
     }
 
     // SUPPORT FUNCTIONS
@@ -3923,7 +3971,7 @@ var app = (function () {
     		position:markerLocation,
     		map:map
     	});
-
+    	markers.push(marker);
     	latlngBounds.extend(markerLocation);
     	let infoWindow = new google.maps.InfoWindow({
     	 	content: locationName
@@ -3940,8 +3988,9 @@ var app = (function () {
 
     function clearMarkers(){
     	if (markers) {
-    		for(i in markers) {
+    		for(let i in markers) {
     			markers[i].setMap(null);
+    			centerMap();
     		}
     	markers = [];
     	}
@@ -3988,79 +4037,6 @@ var app = (function () {
     }
 
     // (1:0)  <script>  import {link,navigate}
-    function create_catch_block_1(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_catch_block_1.name,
-    		type: "catch",
-    		source: "(1:0)  <script>  import {link,navigate}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (79:24)      {#await locations then store}
-    function create_then_block(ctx) {
-    	let await_block_anchor;
-    	let promise;
-
-    	let info_1 = {
-    		ctx,
-    		current: null,
-    		token: null,
-    		hasCatch: false,
-    		pending: create_pending_block_1,
-    		then: create_then_block_1,
-    		catch: create_catch_block,
-    		value: 9
-    	};
-
-    	handle_promise(promise = /*locations*/ ctx[1], info_1);
-
-    	const block = {
-    		c: function create() {
-    			await_block_anchor = empty();
-    			info_1.block.c();
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, await_block_anchor, anchor);
-    			info_1.block.m(target, info_1.anchor = anchor);
-    			info_1.mount = () => await_block_anchor.parentNode;
-    			info_1.anchor = await_block_anchor;
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-    			info_1.ctx = ctx;
-
-    			if (dirty & /*locations*/ 2 && promise !== (promise = /*locations*/ ctx[1]) && handle_promise(promise, info_1)) ; else {
-    				const child_ctx = ctx.slice();
-    				child_ctx[9] = info_1.resolved;
-    				info_1.block.p(child_ctx, dirty);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(await_block_anchor);
-    			info_1.block.d(detaching);
-    			info_1.token = null;
-    			info_1 = null;
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_then_block.name,
-    		type: "then",
-    		source: "(79:24)      {#await locations then store}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (1:0)  <script>  import {link,navigate}
     function create_catch_block(ctx) {
     	const block = { c: noop, m: noop, p: noop, d: noop };
 
@@ -4075,10 +4051,10 @@ var app = (function () {
     	return block;
     }
 
-    // (80:33)        {#each store as shop, i}
-    function create_then_block_1(ctx) {
+    // (88:24)        {#each locationsDistanceObj as shop, i}
+    function create_then_block(ctx) {
     	let each_1_anchor;
-    	let each_value = /*store*/ ctx[9];
+    	let each_value = /*locationsDistanceObj*/ ctx[2];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -4102,8 +4078,8 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*locations, routeMe, info, getDistance*/ 54) {
-    				each_value = /*store*/ ctx[9];
+    			if (dirty & /*locationsDistanceObj, routeMe, info, getDistance*/ 54) {
+    				each_value = /*locationsDistanceObj*/ ctx[2];
     				validate_each_argument(each_value);
     				let i;
 
@@ -4134,37 +4110,37 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_then_block_1.name,
+    		id: create_then_block.name,
     		type: "then",
-    		source: "(80:33)        {#each store as shop, i}",
+    		source: "(88:24)        {#each locationsDistanceObj as shop, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (81:6) {#each store as shop, i}
+    // (89:6) {#each locationsDistanceObj as shop, i}
     function create_each_block(ctx) {
     	let li;
     	let div;
     	let h5;
     	let t0;
-    	let t1_value = /*shop*/ ctx[10][0].name + "";
+    	let t1_value = /*shop*/ ctx[10].name + "";
     	let t1;
     	let t2;
     	let small0;
-    	let t3_value = /*getDistance*/ ctx[4](/*shop*/ ctx[10][0].id) + "";
+    	let t3_value = /*getDistance*/ ctx[4](/*shop*/ ctx[10].id) + "";
     	let t3;
     	let t4;
     	let t5;
     	let p;
     	let t6;
-    	let t7_value = /*ing*/ ctx[8].name + "";
+    	let t7_value = /*ing*/ ctx[9].name + "";
     	let t7;
     	let t8;
     	let small1;
     	let t9;
-    	let t10_value = /*ing*/ ctx[8].size + "";
+    	let t10_value = /*ing*/ ctx[9].size + "";
     	let t10;
     	let t11;
     	let li_id_value;
@@ -4196,19 +4172,19 @@ var app = (function () {
     			t10 = text(t10_value);
     			t11 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 83, 10, 2244);
+    			add_location(h5, file$1, 91, 10, 2612);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 84, 10, 2302);
+    			add_location(small0, file$1, 92, 10, 2667);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 82, 8, 2183);
+    			add_location(div, file$1, 90, 8, 2551);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 86, 8, 2386);
+    			add_location(p, file$1, 94, 8, 2748);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 87, 8, 2431);
+    			add_location(small1, file$1, 95, 8, 2793);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
-    			attr_dev(li, "id", li_id_value = /*shop*/ ctx[10][0].id);
+    			attr_dev(li, "id", li_id_value = /*shop*/ ctx[10].id);
     			set_style(li, "z-index", "1");
-    			add_location(li, file$1, 81, 8, 2022);
+    			add_location(li, file$1, 89, 8, 2399);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4237,12 +4213,12 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty & /*locations*/ 2 && t1_value !== (t1_value = /*shop*/ ctx[10][0].name + "")) set_data_dev(t1, t1_value);
-    			if (dirty & /*locations*/ 2 && t3_value !== (t3_value = /*getDistance*/ ctx[4](/*shop*/ ctx[10][0].id) + "")) set_data_dev(t3, t3_value);
-    			if (dirty & /*info*/ 4 && t7_value !== (t7_value = /*ing*/ ctx[8].name + "")) set_data_dev(t7, t7_value);
-    			if (dirty & /*info*/ 4 && t10_value !== (t10_value = /*ing*/ ctx[8].size + "")) set_data_dev(t10, t10_value);
+    			if (dirty & /*locationsDistanceObj*/ 4 && t1_value !== (t1_value = /*shop*/ ctx[10].name + "")) set_data_dev(t1, t1_value);
+    			if (dirty & /*locationsDistanceObj*/ 4 && t3_value !== (t3_value = /*getDistance*/ ctx[4](/*shop*/ ctx[10].id) + "")) set_data_dev(t3, t3_value);
+    			if (dirty & /*info*/ 2 && t7_value !== (t7_value = /*ing*/ ctx[9].name + "")) set_data_dev(t7, t7_value);
+    			if (dirty & /*info*/ 2 && t10_value !== (t10_value = /*ing*/ ctx[9].size + "")) set_data_dev(t10, t10_value);
 
-    			if (dirty & /*locations*/ 2 && li_id_value !== (li_id_value = /*shop*/ ctx[10][0].id)) {
+    			if (dirty & /*locationsDistanceObj*/ 4 && li_id_value !== (li_id_value = /*shop*/ ctx[10].id)) {
     				attr_dev(li, "id", li_id_value);
     			}
     		},
@@ -4257,22 +4233,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(81:6) {#each store as shop, i}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (1:0)  <script>  import {link,navigate}
-    function create_pending_block_1(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_pending_block_1.name,
-    		type: "pending",
-    		source: "(1:0)  <script>  import {link,navigate}",
+    		source: "(89:6) {#each locationsDistanceObj as shop, i}",
     		ctx
     	});
 
@@ -4322,11 +4283,11 @@ var app = (function () {
     		hasCatch: false,
     		pending: create_pending_block,
     		then: create_then_block,
-    		catch: create_catch_block_1,
-    		value: 8
+    		catch: create_catch_block,
+    		value: 9
     	};
 
-    	handle_promise(promise = /*info*/ ctx[2], info_1);
+    	handle_promise(promise = /*info*/ ctx[1], info_1);
 
     	const block = {
     		c: function create() {
@@ -4348,31 +4309,31 @@ var app = (function () {
     			div4 = element("div");
     			info_1.block.c();
     			attr_dev(i0, "class", "fas fa-bars menuButton");
-    			add_location(i0, file$1, 54, 2, 1253);
+    			add_location(i0, file$1, 63, 2, 1649);
     			attr_dev(button0, "class", "menuContainer");
-    			add_location(button0, file$1, 53, 1, 1220);
-    			add_location(div0, file$1, 52, 0, 1213);
+    			add_location(button0, file$1, 62, 1, 1616);
+    			add_location(div0, file$1, 61, 0, 1609);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
-    			add_location(div1, file$1, 59, 1, 1321);
+    			add_location(div1, file$1, 68, 1, 1717);
     			attr_dev(i1, "class", "far fa-compass centerButton");
-    			add_location(i1, file$1, 65, 4, 1457);
+    			add_location(i1, file$1, 74, 4, 1853);
     			attr_dev(button1, "class", "centerContainer");
-    			add_location(button1, file$1, 64, 2, 1399);
-    			add_location(div2, file$1, 63, 0, 1391);
+    			add_location(button1, file$1, 73, 2, 1795);
+    			add_location(div2, file$1, 72, 0, 1787);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			set_style(input, "border-radius", "25px");
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
-    			add_location(input, file$1, 71, 2, 1636);
+    			add_location(input, file$1, 80, 2, 2032);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 72, 2, 1811);
+    			add_location(i2, file$1, 81, 2, 2207);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
-    			add_location(div3, file$1, 70, 0, 1544);
+    			add_location(div3, file$1, 79, 0, 1940);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 77, 0, 1885);
+    			add_location(div4, file$1, 86, 0, 2281);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4427,9 +4388,9 @@ var app = (function () {
 
     			info_1.ctx = ctx;
 
-    			if (dirty & /*info*/ 4 && promise !== (promise = /*info*/ ctx[2]) && handle_promise(promise, info_1)) ; else {
+    			if (dirty & /*info*/ 2 && promise !== (promise = /*info*/ ctx[1]) && handle_promise(promise, info_1)) ; else {
     				const child_ctx = ctx.slice();
-    				child_ctx[8] = info_1.resolved;
+    				child_ctx[9] = info_1.resolved;
     				info_1.block.p(child_ctx, dirty);
     			}
     		},
@@ -4470,18 +4431,26 @@ var app = (function () {
     	let ingredient;
     	let locations = searchIngredients(ingredient);
     	let info = ingredientInfo(ingredient);
+    	let locationsDistanceObj = [];
 
     	onMount(() => {
     		mapCurrentLocation();
     	});
 
     	function handleSubmit(ingredient) {
-    		$$invalidate(2, info = ingredientInfo(ingredient));
-    		$$invalidate(1, locations = searchIngredients(ingredient));
+    		$$invalidate(1, info = ingredientInfo(ingredient));
+    		locations = searchIngredients(ingredient);
 
+    		//Something here to remove the await block for the ingredient. - Will probably need to fix when searching for multiple items. 
+    		// info.then(function(result) {
+    		//   if (result.length != 0){
+    		//     let newInfo = result
+    		//   }
+    		// })
     		locations.then(function (result) {
     			if (result.length != 0) {
-    				createLocationMarkers(result);
+    				let distances = createLocationMarkers(result);
+    				$$invalidate(2, locationsDistanceObj = orderByDistance(result, distances));
     			} else {
     				clearMarkers();
     			}
@@ -4494,7 +4463,7 @@ var app = (function () {
     				return distance[x].distance;
     			}
     		}
-    	} // return hello.newLat
+    	}
 
     	function routeMe(one, two) {
     		drawPath(one, two);
@@ -4513,7 +4482,7 @@ var app = (function () {
     		$$invalidate(0, ingredient);
     	}
 
-    	const click_handler = shop => routeMe(shop[0].lat, shop[0].lng);
+    	const click_handler = shop => routeMe(shop.lat, shop.lng);
 
     	$$self.$capture_state = () => ({
     		link,
@@ -4524,6 +4493,7 @@ var app = (function () {
     		searchIngredients,
     		storeLocations,
     		ingredientInfo,
+    		orderByDistance,
     		homeMap: mapCurrentLocation,
     		distance,
     		centerMap,
@@ -4533,6 +4503,7 @@ var app = (function () {
     		ingredient,
     		locations,
     		info,
+    		locationsDistanceObj,
     		handleSubmit,
     		getDistance,
     		routeMe
@@ -4540,8 +4511,9 @@ var app = (function () {
 
     	$$self.$inject_state = $$props => {
     		if ("ingredient" in $$props) $$invalidate(0, ingredient = $$props.ingredient);
-    		if ("locations" in $$props) $$invalidate(1, locations = $$props.locations);
-    		if ("info" in $$props) $$invalidate(2, info = $$props.info);
+    		if ("locations" in $$props) locations = $$props.locations;
+    		if ("info" in $$props) $$invalidate(1, info = $$props.info);
+    		if ("locationsDistanceObj" in $$props) $$invalidate(2, locationsDistanceObj = $$props.locationsDistanceObj);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -4550,8 +4522,8 @@ var app = (function () {
 
     	return [
     		ingredient,
-    		locations,
     		info,
+    		locationsDistanceObj,
     		handleSubmit,
     		getDistance,
     		routeMe,

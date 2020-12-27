@@ -8,5 +8,10 @@ export async function ingredientInfo(ingredient){
 	let ing = []
 	let filteredData = []
 	filteredData = data.filter(item => item.name == ingredient)
-	return filteredData[0]
+	if (filteredData.length != 0){
+		return filteredData[0]
+	} 
+	// else {
+	// 	return []
+	// }
 }
