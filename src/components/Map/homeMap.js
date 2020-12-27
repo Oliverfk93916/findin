@@ -8,6 +8,7 @@ import calculateDistance from '../../store/calculateDistance'
 let clicked = false
 let map, myLocation, latlngBounds
 let markers = []
+let marker = []
 let directionsDisplay = new google.maps.DirectionsRenderer()
 export let distance = []
 
@@ -29,7 +30,7 @@ export default function mapCurrentLocation(){
 	})
 
 	//Creates marker on default map
-	let marker = new google.maps.Marker({
+	marker = new google.maps.Marker({
 		position: myLocation,
 		map: map,
 		title: "You are Here",
@@ -99,6 +100,48 @@ export function createLocationMarkers(latLng){
 	map.fitBounds(latlngBounds)
 	return distance
 }
+export function clearMarkers(){
+	if (markers) {
+		for(let i in markers) {
+			markers[i].setMap(null)
+			centerMap()
+		}
+	markers = []
+	}
+}
+
+export function drawPath(newLat, newLng, selectedMode) {
+
+	clearMarkers()
+	clearCurrentMarker()
+
+	if (directionsDisplay != null) {
+        directionsDisplay.setMap(null);
+        directionsDisplay = null;
+    }
+
+	let directionsService = new google.maps.DirectionsService()
+			let poly = new google.maps.Polyline({
+				strokeColor: "#FF0000",
+				strokeWeight: 3
+			})
+
+			let request = {
+				origin: new google.maps.LatLng(lat, lng),
+				destination: new google.maps.LatLng(newLat,newLng),
+				travelMode: selectedMode
+			}
+
+			directionsService.route(request, function(response, status){
+				if (status == google.maps.DirectionsStatus.OK) {
+					directionsDisplay = new google.maps.DirectionsRenderer({
+						map:map,
+						polylineOptions: poly, 
+						directions: response
+					})
+				}
+			})
+		}
 
 // SUPPORT FUNCTIONS
 function createMarkers(locationLat,locationLng, locationName){
@@ -122,42 +165,8 @@ function createMarkers(locationLat,locationLng, locationName){
 	})
 }
 
-export function clearMarkers(){
-	if (markers) {
-		for(let i in markers) {
-			markers[i].setMap(null)
-			centerMap()
-		}
-	markers = []
-	}
+function clearCurrentMarker(){
+	marker.setMap(null)
 }
 
-export function drawPath(newLat, newLng) {
-	if (directionsDisplay != null) {
-        directionsDisplay.setMap(null);
-        directionsDisplay = null;
-    }
-
-	let directionsService = new google.maps.DirectionsService()
-			let poly = new google.maps.Polyline({
-				strokeColor: "#FF0000",
-				strokeWeight: 4
-			})
-
-			let request = {
-				origin: new google.maps.LatLng(lat, lng),
-				destination: new google.maps.LatLng(newLat,newLng),
-				travelMode: google.maps.DirectionsTravelMode.WALKING
-			}
-
-			directionsService.route(request, function(response, status){
-				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay = new google.maps.DirectionsRenderer({
-						map:map,
-						polylineOptions: poly, 
-						directions: response
-					})
-				}
-			})
-		}
 

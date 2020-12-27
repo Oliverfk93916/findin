@@ -10,9 +10,6 @@ var app = (function () {
             tar[k] = src[k];
         return tar;
     }
-    function is_promise(value) {
-        return value && typeof value === 'object' && typeof value.then === 'function';
-    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -312,75 +309,6 @@ var app = (function () {
                 }
             });
             block.o(local);
-        }
-    }
-
-    function handle_promise(promise, info) {
-        const token = info.token = {};
-        function update(type, index, key, value) {
-            if (info.token !== token)
-                return;
-            info.resolved = value;
-            let child_ctx = info.ctx;
-            if (key !== undefined) {
-                child_ctx = child_ctx.slice();
-                child_ctx[key] = value;
-            }
-            const block = type && (info.current = type)(child_ctx);
-            let needs_flush = false;
-            if (info.block) {
-                if (info.blocks) {
-                    info.blocks.forEach((block, i) => {
-                        if (i !== index && block) {
-                            group_outros();
-                            transition_out(block, 1, 1, () => {
-                                info.blocks[i] = null;
-                            });
-                            check_outros();
-                        }
-                    });
-                }
-                else {
-                    info.block.d(1);
-                }
-                block.c();
-                transition_in(block, 1);
-                block.m(info.mount(), info.anchor);
-                needs_flush = true;
-            }
-            info.block = block;
-            if (info.blocks)
-                info.blocks[index] = block;
-            if (needs_flush) {
-                flush();
-            }
-        }
-        if (is_promise(promise)) {
-            const current_component = get_current_component();
-            promise.then(value => {
-                set_current_component(current_component);
-                update(info.then, 1, info.value, value);
-                set_current_component(null);
-            }, error => {
-                set_current_component(current_component);
-                update(info.catch, 2, info.error, error);
-                set_current_component(null);
-                if (!info.hasCatch) {
-                    throw error;
-                }
-            });
-            // if we previously had a then/catch block, destroy it
-            if (info.current !== info.pending) {
-                update(info.pending, 0);
-                return true;
-            }
-        }
-        else {
-            if (info.current !== info.then) {
-                update(info.then, 1, info.value, promise);
-                return true;
-            }
-            info.resolved = promise;
         }
     }
 
@@ -3872,6 +3800,7 @@ var app = (function () {
     let clicked = false;
     let map, myLocation, latlngBounds;
     let markers = [];
+    let marker = [];
     let directionsDisplay = new google.maps.DirectionsRenderer();
     let distance = [];
 
@@ -3893,7 +3822,7 @@ var app = (function () {
     	});
 
     	//Creates marker on default map
-    	let marker = new google.maps.Marker({
+    	marker = new google.maps.Marker({
     		position: myLocation,
     		map: map,
     		title: "You are Here",
@@ -3963,6 +3892,48 @@ var app = (function () {
     	map.fitBounds(latlngBounds);
     	return distance
     }
+    function clearMarkers(){
+    	if (markers) {
+    		for(let i in markers) {
+    			markers[i].setMap(null);
+    			centerMap();
+    		}
+    	markers = [];
+    	}
+    }
+
+    function drawPath(newLat, newLng, selectedMode) {
+
+    	clearMarkers();
+    	clearCurrentMarker();
+
+    	if (directionsDisplay != null) {
+            directionsDisplay.setMap(null);
+            directionsDisplay = null;
+        }
+
+    	let directionsService = new google.maps.DirectionsService();
+    			let poly = new google.maps.Polyline({
+    				strokeColor: "#FF0000",
+    				strokeWeight: 3
+    			});
+
+    			let request = {
+    				origin: new google.maps.LatLng(lat, lng),
+    				destination: new google.maps.LatLng(newLat,newLng),
+    				travelMode: selectedMode
+    			};
+
+    			directionsService.route(request, function(response, status){
+    				if (status == google.maps.DirectionsStatus.OK) {
+    					directionsDisplay = new google.maps.DirectionsRenderer({
+    						map:map,
+    						polylineOptions: poly, 
+    						directions: response
+    					});
+    				}
+    			});
+    		}
 
     // SUPPORT FUNCTIONS
     function createMarkers(locationLat,locationLng, locationName){
@@ -3986,44 +3957,9 @@ var app = (function () {
     	});
     }
 
-    function clearMarkers(){
-    	if (markers) {
-    		for(let i in markers) {
-    			markers[i].setMap(null);
-    			centerMap();
-    		}
-    	markers = [];
-    	}
+    function clearCurrentMarker(){
+    	marker.setMap(null);
     }
-
-    function drawPath(newLat, newLng) {
-    	if (directionsDisplay != null) {
-            directionsDisplay.setMap(null);
-            directionsDisplay = null;
-        }
-
-    	let directionsService = new google.maps.DirectionsService();
-    			let poly = new google.maps.Polyline({
-    				strokeColor: "#FF0000",
-    				strokeWeight: 4
-    			});
-
-    			let request = {
-    				origin: new google.maps.LatLng(lat, lng),
-    				destination: new google.maps.LatLng(newLat,newLng),
-    				travelMode: google.maps.DirectionsTravelMode.WALKING
-    			};
-
-    			directionsService.route(request, function(response, status){
-    				if (status == google.maps.DirectionsStatus.OK) {
-    					directionsDisplay = new google.maps.DirectionsRenderer({
-    						map:map,
-    						polylineOptions: poly, 
-    						directions: response
-    					});
-    				}
-    			});
-    		}
 
     /* src/pages/Home.svelte generated by Svelte v3.31.0 */
 
@@ -4031,124 +3967,239 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[10] = list[i];
-    	child_ctx[12] = i;
+    	child_ctx[19] = list[i];
+    	child_ctx[21] = i;
     	return child_ctx;
     }
 
-    // (1:0)  <script>  import {link,navigate}
-    function create_catch_block(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_catch_block.name,
-    		type: "catch",
-    		source: "(1:0)  <script>  import {link,navigate}",
-    		ctx
-    	});
-
-    	return block;
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[22] = list[i];
+    	return child_ctx;
     }
 
-    // (88:24)        {#each locationsDistanceObj as shop, i}
-    function create_then_block(ctx) {
-    	let each_1_anchor;
-    	let each_value = /*locationsDistanceObj*/ ctx[2];
-    	validate_each_argument(each_value);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
-    	}
+    // (127:22) 
+    function create_if_block_3(ctx) {
+    	let div;
+    	let button;
+    	let i;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			each_1_anchor = empty();
+    			div = element("div");
+    			button = element("button");
+    			i = element("i");
+    			attr_dev(i, "class", "fas fa-bus transportButton");
+    			add_location(i, file$1, 129, 4, 3348);
+    			attr_dev(button, "class", "transportContainer");
+    			add_location(button, file$1, 128, 2, 3259);
+    			add_location(div, file$1, 127, 0, 3251);
     		},
     		m: function mount(target, anchor) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
+    			insert_dev(target, div, anchor);
+    			append_dev(div, button);
+    			append_dev(button, i);
 
-    			insert_dev(target, each_1_anchor, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*locationsDistanceObj, routeMe, info, getDistance*/ 54) {
-    				each_value = /*locationsDistanceObj*/ ctx[2];
-    				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value.length;
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", prevent_default(/*click_handler_3*/ ctx[12]), false, true, false);
+    				mounted = true;
     			}
     		},
+    		p: noop,
     		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(each_1_anchor);
+    			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_then_block.name,
-    		type: "then",
-    		source: "(88:24)        {#each locationsDistanceObj as shop, i}",
+    		id: create_if_block_3.name,
+    		type: "if",
+    		source: "(127:22) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (89:6) {#each locationsDistanceObj as shop, i}
-    function create_each_block(ctx) {
+    // (121:22) 
+    function create_if_block_2(ctx) {
+    	let div;
+    	let button;
+    	let i;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			button = element("button");
+    			i = element("i");
+    			attr_dev(i, "class", "fas fa-car transportButton");
+    			add_location(i, file$1, 123, 4, 3170);
+    			attr_dev(button, "class", "transportContainer");
+    			add_location(button, file$1, 122, 2, 3081);
+    			add_location(div, file$1, 121, 0, 3073);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, button);
+    			append_dev(button, i);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", prevent_default(/*click_handler_2*/ ctx[11]), false, true, false);
+    				mounted = true;
+    			}
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(121:22) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (115:22) 
+    function create_if_block_1$1(ctx) {
+    	let div;
+    	let button;
+    	let i;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			button = element("button");
+    			i = element("i");
+    			attr_dev(i, "class", "fas fa-biking transportButton");
+    			add_location(i, file$1, 117, 4, 2989);
+    			attr_dev(button, "class", "transportContainer");
+    			add_location(button, file$1, 116, 2, 2900);
+    			add_location(div, file$1, 115, 0, 2892);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, button);
+    			append_dev(button, i);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", prevent_default(/*click_handler_1*/ ctx[10]), false, true, false);
+    				mounted = true;
+    			}
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(115:22) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (109:0) {#if toggle == 1}
+    function create_if_block$1(ctx) {
+    	let div;
+    	let button;
+    	let i;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			button = element("button");
+    			i = element("i");
+    			attr_dev(i, "class", "fas fa-walking transportButton");
+    			add_location(i, file$1, 111, 4, 2807);
+    			attr_dev(button, "class", "transportContainer");
+    			add_location(button, file$1, 110, 2, 2718);
+    			add_location(div, file$1, 109, 0, 2710);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, button);
+    			append_dev(button, i);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", prevent_default(/*click_handler*/ ctx[9]), false, true, false);
+    				mounted = true;
+    			}
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(109:0) {#if toggle == 1}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (157:4) {#each ingredientObj as ing}
+    function create_each_block_1(ctx) {
     	let li;
     	let div;
     	let h5;
     	let t0;
-    	let t1_value = /*shop*/ ctx[10].name + "";
+    	let t1_value = /*shop*/ ctx[19].name + "";
     	let t1;
     	let t2;
     	let small0;
-    	let t3_value = /*getDistance*/ ctx[4](/*shop*/ ctx[10].id) + "";
+    	let t3_value = /*getDistance*/ ctx[6](/*shop*/ ctx[19].id) + "";
     	let t3;
     	let t4;
     	let t5;
     	let p;
     	let t6;
-    	let t7_value = /*ing*/ ctx[9].name + "";
+    	let t7_value = /*ing*/ ctx[22].name + "";
     	let t7;
     	let t8;
     	let small1;
     	let t9;
-    	let t10_value = /*ing*/ ctx[9].size + "";
+    	let t10_value = /*ing*/ ctx[22].size + "";
     	let t10;
     	let t11;
     	let li_id_value;
     	let mounted;
     	let dispose;
 
-    	function click_handler() {
-    		return /*click_handler*/ ctx[7](/*shop*/ ctx[10]);
+    	function click_handler_4() {
+    		return /*click_handler_4*/ ctx[14](/*shop*/ ctx[19]);
     	}
 
     	const block = {
@@ -4172,19 +4223,19 @@ var app = (function () {
     			t10 = text(t10_value);
     			t11 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 91, 10, 2612);
+    			add_location(h5, file$1, 159, 8, 4372);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 92, 10, 2667);
+    			add_location(small0, file$1, 160, 8, 4425);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 90, 8, 2551);
+    			add_location(div, file$1, 158, 6, 4313);
     			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 94, 8, 2748);
+    			add_location(p, file$1, 162, 6, 4502);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 95, 8, 2793);
+    			add_location(small1, file$1, 163, 6, 4545);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
-    			attr_dev(li, "id", li_id_value = /*shop*/ ctx[10].id);
+    			attr_dev(li, "id", li_id_value = /*shop*/ ctx[19].id);
     			set_style(li, "z-index", "1");
-    			add_location(li, file$1, 89, 8, 2399);
+    			add_location(li, file$1, 157, 6, 4149);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4207,18 +4258,18 @@ var app = (function () {
     			append_dev(li, t11);
 
     			if (!mounted) {
-    				dispose = listen_dev(li, "click", prevent_default(click_handler), false, true, false);
+    				dispose = listen_dev(li, "click", prevent_default(click_handler_4), false, true, false);
     				mounted = true;
     			}
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty & /*locationsDistanceObj*/ 4 && t1_value !== (t1_value = /*shop*/ ctx[10].name + "")) set_data_dev(t1, t1_value);
-    			if (dirty & /*locationsDistanceObj*/ 4 && t3_value !== (t3_value = /*getDistance*/ ctx[4](/*shop*/ ctx[10].id) + "")) set_data_dev(t3, t3_value);
-    			if (dirty & /*info*/ 2 && t7_value !== (t7_value = /*ing*/ ctx[9].name + "")) set_data_dev(t7, t7_value);
-    			if (dirty & /*info*/ 2 && t10_value !== (t10_value = /*ing*/ ctx[9].size + "")) set_data_dev(t10, t10_value);
+    			if (dirty & /*locationsDistanceObj*/ 2 && t1_value !== (t1_value = /*shop*/ ctx[19].name + "")) set_data_dev(t1, t1_value);
+    			if (dirty & /*locationsDistanceObj*/ 2 && t3_value !== (t3_value = /*getDistance*/ ctx[6](/*shop*/ ctx[19].id) + "")) set_data_dev(t3, t3_value);
+    			if (dirty & /*ingredientObj*/ 4 && t7_value !== (t7_value = /*ing*/ ctx[22].name + "")) set_data_dev(t7, t7_value);
+    			if (dirty & /*ingredientObj*/ 4 && t10_value !== (t10_value = /*ing*/ ctx[22].size + "")) set_data_dev(t10, t10_value);
 
-    			if (dirty & /*locationsDistanceObj*/ 4 && li_id_value !== (li_id_value = /*shop*/ ctx[10].id)) {
+    			if (dirty & /*locationsDistanceObj*/ 2 && li_id_value !== (li_id_value = /*shop*/ ctx[19].id)) {
     				attr_dev(li, "id", li_id_value);
     			}
     		},
@@ -4231,24 +4282,77 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block.name,
+    		id: create_each_block_1.name,
     		type: "each",
-    		source: "(89:6) {#each locationsDistanceObj as shop, i}",
+    		source: "(157:4) {#each ingredientObj as ing}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (1:0)  <script>  import {link,navigate}
-    function create_pending_block(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
+    // (156:4) {#each locationsDistanceObj as shop, i}
+    function create_each_block(ctx) {
+    	let each_1_anchor;
+    	let each_value_1 = /*ingredientObj*/ ctx[2];
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*locationsDistanceObj, routeMe, selectedMode, ingredientObj, getDistance*/ 214) {
+    				each_value_1 = /*ingredientObj*/ ctx[2];
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_1.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_pending_block.name,
-    		type: "pending",
-    		source: "(1:0)  <script>  import {link,navigate}",
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(156:4) {#each locationsDistanceObj as shop, i}",
     		ctx
     	});
 
@@ -4260,34 +4364,38 @@ var app = (function () {
     	let button0;
     	let i0;
     	let t0;
-    	let div1;
     	let t1;
+    	let div1;
+    	let t2;
     	let div2;
     	let button1;
     	let i1;
-    	let t2;
+    	let t3;
     	let div3;
     	let input;
-    	let t3;
-    	let i2;
     	let t4;
+    	let i2;
+    	let t5;
     	let div4;
-    	let promise;
     	let mounted;
     	let dispose;
 
-    	let info_1 = {
-    		ctx,
-    		current: null,
-    		token: null,
-    		hasCatch: false,
-    		pending: create_pending_block,
-    		then: create_then_block,
-    		catch: create_catch_block,
-    		value: 9
-    	};
+    	function select_block_type(ctx, dirty) {
+    		if (/*toggle*/ ctx[3] == 1) return create_if_block$1;
+    		if (/*toggle*/ ctx[3] == 2) return create_if_block_1$1;
+    		if (/*toggle*/ ctx[3] == 3) return create_if_block_2;
+    		if (/*toggle*/ ctx[3] == 4) return create_if_block_3;
+    	}
 
-    	handle_promise(promise = /*info*/ ctx[1], info_1);
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type && current_block_type(ctx);
+    	let each_value = /*locationsDistanceObj*/ ctx[1];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
 
     	const block = {
     		c: function create() {
@@ -4295,45 +4403,51 @@ var app = (function () {
     			button0 = element("button");
     			i0 = element("i");
     			t0 = space();
-    			div1 = element("div");
+    			if (if_block) if_block.c();
     			t1 = space();
+    			div1 = element("div");
+    			t2 = space();
     			div2 = element("div");
     			button1 = element("button");
     			i1 = element("i");
-    			t2 = space();
+    			t3 = space();
     			div3 = element("div");
     			input = element("input");
-    			t3 = space();
-    			i2 = element("i");
     			t4 = space();
+    			i2 = element("i");
+    			t5 = space();
     			div4 = element("div");
-    			info_1.block.c();
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
     			attr_dev(i0, "class", "fas fa-bars menuButton");
-    			add_location(i0, file$1, 63, 2, 1649);
+    			add_location(i0, file$1, 103, 2, 2610);
     			attr_dev(button0, "class", "menuContainer");
-    			add_location(button0, file$1, 62, 1, 1616);
-    			add_location(div0, file$1, 61, 0, 1609);
+    			add_location(button0, file$1, 102, 1, 2577);
+    			add_location(div0, file$1, 101, 0, 2570);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
-    			add_location(div1, file$1, 68, 1, 1717);
+    			add_location(div1, file$1, 135, 1, 3429);
     			attr_dev(i1, "class", "far fa-compass centerButton");
-    			add_location(i1, file$1, 74, 4, 1853);
+    			add_location(i1, file$1, 141, 4, 3565);
     			attr_dev(button1, "class", "centerContainer");
-    			add_location(button1, file$1, 73, 2, 1795);
-    			add_location(div2, file$1, 72, 0, 1787);
+    			add_location(button1, file$1, 140, 2, 3507);
+    			add_location(div2, file$1, 139, 0, 3499);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			set_style(input, "border-radius", "25px");
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
-    			add_location(input, file$1, 80, 2, 2032);
+    			add_location(input, file$1, 147, 2, 3744);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 81, 2, 2207);
+    			add_location(i2, file$1, 148, 2, 3919);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
-    			add_location(div3, file$1, 79, 0, 1940);
+    			add_location(div3, file$1, 146, 0, 3652);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 86, 0, 2281);
+    			add_location(div4, file$1, 153, 0, 3993);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4343,32 +4457,35 @@ var app = (function () {
     			append_dev(div0, button0);
     			append_dev(button0, i0);
     			insert_dev(target, t0, anchor);
-    			insert_dev(target, div1, anchor);
+    			if (if_block) if_block.m(target, anchor);
     			insert_dev(target, t1, anchor);
+    			insert_dev(target, div1, anchor);
+    			insert_dev(target, t2, anchor);
     			insert_dev(target, div2, anchor);
     			append_dev(div2, button1);
     			append_dev(button1, i1);
-    			insert_dev(target, t2, anchor);
+    			insert_dev(target, t3, anchor);
     			insert_dev(target, div3, anchor);
     			append_dev(div3, input);
     			set_input_value(input, /*ingredient*/ ctx[0]);
-    			append_dev(div3, t3);
+    			append_dev(div3, t4);
     			append_dev(div3, i2);
-    			insert_dev(target, t4, anchor);
+    			insert_dev(target, t5, anchor);
     			insert_dev(target, div4, anchor);
-    			info_1.block.m(div4, info_1.anchor = null);
-    			info_1.mount = () => div4;
-    			info_1.anchor = null;
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div4, null);
+    			}
 
     			if (!mounted) {
     				dispose = [
     					listen_dev(button1, "click", centerMap, false, false, false),
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[6]),
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[13]),
     					listen_dev(
     						input,
     						"input",
     						function () {
-    							if (is_function(/*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]))) /*handleSubmit*/ ctx[3](/*ingredient*/ ctx[0]).apply(this, arguments);
+    							if (is_function(/*handleSubmit*/ ctx[5](/*ingredient*/ ctx[0]))) /*handleSubmit*/ ctx[5](/*ingredient*/ ctx[0]).apply(this, arguments);
     						},
     						false,
     						false,
@@ -4382,16 +4499,44 @@ var app = (function () {
     		p: function update(new_ctx, [dirty]) {
     			ctx = new_ctx;
 
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if (if_block) if_block.d(1);
+    				if_block = current_block_type && current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(t1.parentNode, t1);
+    				}
+    			}
+
     			if (dirty & /*ingredient*/ 1 && input.value !== /*ingredient*/ ctx[0]) {
     				set_input_value(input, /*ingredient*/ ctx[0]);
     			}
 
-    			info_1.ctx = ctx;
+    			if (dirty & /*ingredientObj, locationsDistanceObj, routeMe, selectedMode, getDistance*/ 214) {
+    				each_value = /*locationsDistanceObj*/ ctx[1];
+    				validate_each_argument(each_value);
+    				let i;
 
-    			if (dirty & /*info*/ 2 && promise !== (promise = /*info*/ ctx[1]) && handle_promise(promise, info_1)) ; else {
-    				const child_ctx = ctx.slice();
-    				child_ctx[9] = info_1.resolved;
-    				info_1.block.p(child_ctx, dirty);
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(div4, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
     			}
     		},
     		i: noop,
@@ -4399,16 +4544,20 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div0);
     			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(div1);
+
+    			if (if_block) {
+    				if_block.d(detaching);
+    			}
+
     			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(div2);
+    			if (detaching) detach_dev(div1);
     			if (detaching) detach_dev(t2);
+    			if (detaching) detach_dev(div2);
+    			if (detaching) detach_dev(t3);
     			if (detaching) detach_dev(div3);
-    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t5);
     			if (detaching) detach_dev(div4);
-    			info_1.block.d();
-    			info_1.token = null;
-    			info_1 = null;
+    			destroy_each(each_blocks, detaching);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -4428,31 +4577,43 @@ var app = (function () {
     function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Home", slots, []);
-    	let ingredient;
+    	let ingredient, shopLatx, shopLngx;
     	let locations = searchIngredients(ingredient);
     	let info = ingredientInfo(ingredient);
     	let locationsDistanceObj = [];
+    	let ingredientObj = [];
+    	let toggle = 1;
+    	let selectedMode = google.maps.DirectionsTravelMode.WALKING;
 
     	onMount(() => {
     		mapCurrentLocation();
     	});
 
     	function handleSubmit(ingredient) {
-    		$$invalidate(1, info = ingredientInfo(ingredient));
+    		info = ingredientInfo(ingredient);
     		locations = searchIngredients(ingredient);
 
-    		//Something here to remove the await block for the ingredient. - Will probably need to fix when searching for multiple items. 
-    		// info.then(function(result) {
-    		//   if (result.length != 0){
-    		//     let newInfo = result
-    		//   }
-    		// })
+    		//Will probably need to fix when searching for multiple items. 
+    		info.then(function (result) {
+    			if (result) {
+    				$$invalidate(2, ingredientObj = []);
+    				ingredientObj.push(result);
+    			} else {
+    				$$invalidate(2, ingredientObj = []);
+    				shopLatx = null;
+    				shopLngx = null;
+    			}
+    		});
+
     		locations.then(function (result) {
     			if (result.length != 0) {
     				let distances = createLocationMarkers(result);
-    				$$invalidate(2, locationsDistanceObj = orderByDistance(result, distances));
+    				$$invalidate(1, locationsDistanceObj = orderByDistance(result, distances));
     			} else {
-    				clearMarkers();
+    				$$invalidate(1, locationsDistanceObj = []);
+
+    				// clearMarkers()
+    				mapCurrentLocation();
     			}
     		});
     	}
@@ -4465,10 +4626,41 @@ var app = (function () {
     		}
     	}
 
-    	function routeMe(one, two) {
-    		drawPath(one, two);
+    	function routeMe(shopLat, shopLng, selectedMode) {
+    		shopLatx = shopLat;
+    		shopLngx = shopLng;
+    		drawPath(shopLat, shopLng, selectedMode);
     		document.body.scrollTop = 0;
     		document.documentElement.scrollTop = 0;
+    	}
+
+    	function transportToggle() {
+    		$$invalidate(3, toggle += 1);
+
+    		if (toggle > 4) {
+    			$$invalidate(3, toggle = 1);
+    		}
+
+    		switch (toggle) {
+    			case 1:
+    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.WALKING);
+    				break;
+    			case 2:
+    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.BICYCLING);
+    				break;
+    			case 3:
+    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.DRIVING);
+    				break;
+    			case 4:
+    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.TRANSIT);
+    				break;
+    			default:
+    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.WALKING);
+    		}
+
+    		if (shopLatx != null) {
+    			drawPath(shopLatx, shopLngx, selectedMode);
+    		}
     	}
 
     	const writable_props = [];
@@ -4477,12 +4669,17 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Home> was created with unknown prop '${key}'`);
     	});
 
+    	const click_handler = () => transportToggle();
+    	const click_handler_1 = () => transportToggle();
+    	const click_handler_2 = () => transportToggle();
+    	const click_handler_3 = () => transportToggle();
+
     	function input_input_handler() {
     		ingredient = this.value;
     		$$invalidate(0, ingredient);
     	}
 
-    	const click_handler = shop => routeMe(shop.lat, shop.lng);
+    	const click_handler_4 = shop => routeMe(shop.lat, shop.lng, selectedMode);
 
     	$$self.$capture_state = () => ({
     		link,
@@ -4501,19 +4698,30 @@ var app = (function () {
     		drawPath,
     		clearMarkers,
     		ingredient,
+    		shopLatx,
+    		shopLngx,
     		locations,
     		info,
     		locationsDistanceObj,
+    		ingredientObj,
+    		toggle,
+    		selectedMode,
     		handleSubmit,
     		getDistance,
-    		routeMe
+    		routeMe,
+    		transportToggle
     	});
 
     	$$self.$inject_state = $$props => {
     		if ("ingredient" in $$props) $$invalidate(0, ingredient = $$props.ingredient);
+    		if ("shopLatx" in $$props) shopLatx = $$props.shopLatx;
+    		if ("shopLngx" in $$props) shopLngx = $$props.shopLngx;
     		if ("locations" in $$props) locations = $$props.locations;
-    		if ("info" in $$props) $$invalidate(1, info = $$props.info);
-    		if ("locationsDistanceObj" in $$props) $$invalidate(2, locationsDistanceObj = $$props.locationsDistanceObj);
+    		if ("info" in $$props) info = $$props.info;
+    		if ("locationsDistanceObj" in $$props) $$invalidate(1, locationsDistanceObj = $$props.locationsDistanceObj);
+    		if ("ingredientObj" in $$props) $$invalidate(2, ingredientObj = $$props.ingredientObj);
+    		if ("toggle" in $$props) $$invalidate(3, toggle = $$props.toggle);
+    		if ("selectedMode" in $$props) $$invalidate(4, selectedMode = $$props.selectedMode);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -4522,13 +4730,20 @@ var app = (function () {
 
     	return [
     		ingredient,
-    		info,
     		locationsDistanceObj,
+    		ingredientObj,
+    		toggle,
+    		selectedMode,
     		handleSubmit,
     		getDistance,
     		routeMe,
+    		transportToggle,
+    		click_handler,
+    		click_handler_1,
+    		click_handler_2,
+    		click_handler_3,
     		input_input_handler,
-    		click_handler
+    		click_handler_4
     	];
     }
 
