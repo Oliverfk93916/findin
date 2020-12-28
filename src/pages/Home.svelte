@@ -7,22 +7,26 @@
   import {ingredientInfo} from '../store/ingredientInfo'
   import orderByDistance from '../store/orderByDistance'
 
-	//map styles
-	import homeMap, {distance, centerMap, createLocationMarkers, drawPath, clearMarkers} from '../components/Map/homeMap'
+	//Map styles
+	import homeMap, {distance, centerMap, createLocationMarkers, drawPath, clearMarkers, getTimeTaken} from '../components/Map/homeMap'
 
-	let ingredient, shopLatx, shopLngx
+  //Global variables
+	let ingredient, shopLatx, shopLngx, distances
   let locations = searchIngredients(ingredient)
   let info = ingredientInfo(ingredient)
   let locationsDistanceObj = []
   let ingredientObj = []
   let toggle = 1
+  let travelMode = google.maps.TravelMode.WALKING
   let selectedMode = google.maps.DirectionsTravelMode.WALKING
 
+
+  //On startup open map
 	onMount(()=> {
 		 homeMap()
 	})
 
-
+  //Handles each key input
   function handleSubmit(ingredient){
     info = ingredientInfo(ingredient)
     locations = searchIngredients(ingredient)
@@ -37,29 +41,24 @@
         shopLatx = null
         shopLngx = null
       }
-
     })
 
     locations.then(function(result) {
       if (result.length != 0) {
-        let distances = createLocationMarkers(result)
+        distances = createLocationMarkers(result, travelMode)
         locationsDistanceObj = orderByDistance(result, distances)
+        for (var x = 0; x < locationsDistanceObj.length; x++){
+          getTravelInfo(x,locationsDistanceObj[x].lat,locationsDistanceObj[x].lng, travelMode)
+        }
       } else {
         locationsDistanceObj = []
-        // clearMarkers()
+        clearMarkers()
         homeMap()
       }
     })
   }
 
-  function getDistance (id){
-    for (let x = 0; x < distance.length; x++){
-      if (distance[x].id == id){
-        return distance[x].distance
-      }
-    }
-  }
-
+  //Draws path from current location to store location selected
   function routeMe(shopLat, shopLng, selectedMode) {
     shopLatx = shopLat
     shopLngx = shopLng
@@ -68,34 +67,44 @@
     document.documentElement.scrollTop = 0;
   }
 
+  //Handles transport toggle button and updates all transport info
   function transportToggle(){
-
     toggle += 1
     if (toggle > 4){
       toggle = 1
     }
-
     switch (toggle){
       case 1: 
         selectedMode = google.maps.DirectionsTravelMode.WALKING
+        travelMode = google.maps.TravelMode.WALKING 
         break;
       case 2: 
         selectedMode = google.maps.DirectionsTravelMode.BICYCLING
+        travelMode = google.maps.TravelMode.BICYCLING 
         break;
       case 3:
         selectedMode = google.maps.DirectionsTravelMode.DRIVING
+        travelMode = google.maps.TravelMode.DRIVING 
         break;
       case 4:
         selectedMode = google.maps.DirectionsTravelMode.TRANSIT
+        travelMode = google.maps.TravelMode.TRANSIT 
         break;
       default:
        selectedMode = google.maps.DirectionsTravelMode.WALKING
+       travelMode = google.maps.TravelMode.WALKING
     } if (shopLatx != null) {
       drawPath(shopLatx, shopLngx, selectedMode)
     } 
+    for (var x = 0; x < locationsDistanceObj.length; x++){
+          getTravelInfo(x,locationsDistanceObj[x].lat,locationsDistanceObj[x].lng, travelMode)
+        }
   }
 
-
+  //Support function to get duration and distance
+  function getTravelInfo(i,shopLat, shopLng, travelMode){
+    getTimeTaken(i,shopLat, shopLng, travelMode)
+  }
 </script>
 
 <!-- MENU BARS -->
@@ -105,38 +114,37 @@
 	</button>
 </div>
 
-<!-- MODES OF TRANSPORT -->
+<!-- MODES OF TRANSPORT BUTTON-->
 {#if toggle == 1}
-<div>
-  <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
-    <i class="fas fa-walking transportButton">
-  </button>
-</div>
+  <div>
+    <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
+      <i class="fas fa-walking transportButton">
+    </button>
+  </div>
 {:else if toggle == 2}
-<div>
-  <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
-    <i class="fas fa-biking transportButton">
-  </button>
-</div>
+  <div>
+    <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
+      <i class="fas fa-biking transportButton">
+    </button>
+  </div>
 {:else if toggle == 3}
-<div>
-  <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
-    <i class="fas fa-car transportButton">
-  </button>
-</div>
+  <div>
+    <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
+      <i class="fas fa-car transportButton">
+    </button>
+  </div>
 {:else if toggle == 4}
-<div>
-  <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
-    <i class="fas fa-bus transportButton">
-  </button>
-</div>
-  {/if}
+  <div>
+    <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
+      <i class="fas fa-bus transportButton">
+    </button>
+  </div>
+{/if}
 
 <!-- MAP -->
-	<div id="interactiveMap" class="mapHome">
-	</div>
+	<div id="interactiveMap" class="mapHome"></div>
 
-<!-- RE-CENTER -->
+<!-- RE-CENTER BUTTON-->
 <div>
   <button on:click={centerMap} class="centerContainer">
     <i class="far fa-compass centerButton">
@@ -152,20 +160,21 @@
 
 <!-- STORE LIST -->
 <div class="list-group listContainer">
-  <!-- {#await info then ing} -->
+  {#if locationsDistanceObj.length != 0}
     {#each locationsDistanceObj as shop, i}
-    {#each ingredientObj as ing}
-      <li class="list-group-item list-group-item-action" id ={shop.id} style="z-index: 1" on:click|preventDefault={() => routeMe(shop.lat,shop.lng, selectedMode)}>
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Shop name: {shop.name}</h5>
-        <small class="text-muted">{getDistance(shop.id)}m</small>
-      </div>
-      <p class="mb-1">Name: {ing.name}</p>
-      <small class="text-muted">Size: {ing.size}</small>
-      </li>
+      {#each ingredientObj as ing}
+        <li class="list-group-item list-group-item-action" id ={shop.id} style="z-index: 1" on:click|preventDefault={() => routeMe(shop.lat,shop.lng, selectedMode)}>
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Shop name: {shop.name}</h5>
+          <small class="text-muted" id={`duration${i}`}></small>
+          <small class="text-muted" id={`distance${i}`}></small>
+        </div>
+        <p class="mb-1">Name: {ing.name}</p>
+        <small class="text-muted">Size: {ing.size}</small>
+        </li>
+      {/each}
     {/each}
-    {/each}
-  <!-- {/await} -->
+  {/if}
 </div>
 
 

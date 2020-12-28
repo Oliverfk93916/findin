@@ -3,7 +3,6 @@ import darkStyles from '../../google/darkStyles'
 import brownStyles from '../../google/brownStyles'
 import {lat,lng} from '../../google/currentLocation'
 import calculateDistance from '../../store/calculateDistance'
-// import marker from '../../google/mapMarker'
 
 let clicked = false
 let map, myLocation, latlngBounds
@@ -11,6 +10,8 @@ let markers = []
 let marker = []
 let directionsDisplay = new google.maps.DirectionsRenderer()
 export let distance = []
+let distances = []
+
 
 // EXPORT FUNCTIONS
 
@@ -64,8 +65,7 @@ export function centerMap() {
 }
 
 //Takes in an array of objects clears current markers and sets new ones
-export function createLocationMarkers(latLng){
-
+export function createLocationMarkers(latLng, travelMode){
 	//Initiates map bounds
 	latlngBounds = new google.maps.LatLngBounds()
 
@@ -73,7 +73,7 @@ export function createLocationMarkers(latLng){
 	clearMarkers()
 
 	let distanceObj = []
-	distance = []
+	
 	//Loop through array and create markers
 	for (var x =0; x < latLng.length;x++){
 		let locationLat = latLng[x][0].lat
@@ -89,17 +89,19 @@ export function createLocationMarkers(latLng){
 			currentLat: lat,
 			currentLng: lng,
 			newLat: locationLat,
-			newLng: locationLng
+			newLng: locationLng,
+			travelMode:travelMode
 		})
 
 		//Use information in object to return distance and id from Calculate Distance function
-		distance.push(calculateDistance(distanceObj[x]))
+		distances.push(getDistance(distanceObj[x]))
 	}
-
 	//Resize map to fit all bounds
 	map.fitBounds(latlngBounds)
-	return distance
+	return distances
 }
+
+//Clears all other markers for use when drawing path
 export function clearMarkers(){
 	if (markers) {
 		for(let i in markers) {
@@ -110,8 +112,8 @@ export function clearMarkers(){
 	}
 }
 
+//Gets locations and draws paths 
 export function drawPath(newLat, newLng, selectedMode) {
-
 	clearMarkers()
 	clearCurrentMarker()
 
@@ -121,29 +123,59 @@ export function drawPath(newLat, newLng, selectedMode) {
     }
 
 	let directionsService = new google.maps.DirectionsService()
-			let poly = new google.maps.Polyline({
-				strokeColor: "#FF0000",
-				strokeWeight: 3
-			})
+	let poly = new google.maps.Polyline({
+		strokeColor: "#FF0000",
+		strokeWeight: 3
+	})
 
-			let request = {
-				origin: new google.maps.LatLng(lat, lng),
-				destination: new google.maps.LatLng(newLat,newLng),
-				travelMode: selectedMode
-			}
+	let request = {
+		origin: new google.maps.LatLng(lat, lng),
+		destination: new google.maps.LatLng(newLat,newLng),
+		travelMode: selectedMode
+	}
 
-			directionsService.route(request, function(response, status){
-				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay = new google.maps.DirectionsRenderer({
-						map:map,
-						polylineOptions: poly, 
-						directions: response
-					})
-				}
+	directionsService.route(request, function(response, status){
+		if (status == google.maps.DirectionsStatus.OK) {
+			directionsDisplay = new google.maps.DirectionsRenderer({
+				map:map,
+				polylineOptions: poly, 
+				directions: response
 			})
 		}
+	})
+}
+
+
+//Gets shop location info and updates small elements with distance and duration
+export function getTimeTaken(i,shopLat, shopLng, selectedMode){
+	const origin = { lat,lng}
+	const destination = {lat: shopLat, lng: shopLng}
+	const service = new google.maps.DistanceMatrixService();
+  	service.getDistanceMatrix({
+      origins: [origin],
+      destinations: [destination],
+      travelMode: selectedMode,
+      unitSystem: google.maps.UnitSystem.IMPERIAL,
+      avoidHighways: false,
+      avoidTolls: false,
+    },
+    (response, status) => {
+    if (status !== "OK") {
+    	alert("Error was: " + status);
+    	} else {
+        	const originList = response.originAddresses;
+	        const destinationList = response.destinationAddresses;
+	        const durationDiv = document.getElementById(`duration${i}`)
+	        const distanceDiv = document.getElementById(`distance${i}`)
+	        distanceDiv.innerHTML = response.rows[0].elements[0].distance.text
+	        durationDiv.innerHTML = response.rows[0].elements[0].duration.text
+		}
+	})
+}
 
 // SUPPORT FUNCTIONS
+
+//Creates and displays map markers
 function createMarkers(locationLat,locationLng, locationName){
 	let markerLocation = new google.maps.LatLng(locationLat, locationLng)
 	let marker = new google.maps.Marker({
@@ -165,8 +197,34 @@ function createMarkers(locationLat,locationLng, locationName){
 	})
 }
 
+//Clears current location marker for use when drawing path
 function clearCurrentMarker(){
 	marker.setMap(null)
 }
+
+//Gets distances as the crow flies for use by sorting
+function getDistance(distanceObj){
+	let dist = calculateDistance(distanceObj)
+	return dist
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
