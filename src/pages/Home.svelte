@@ -19,6 +19,7 @@
   let toggle = 1
   let travelMode = google.maps.TravelMode.WALKING
   let selectedMode = google.maps.DirectionsTravelMode.WALKING
+  let searched = 0
 
 
   //On startup open map
@@ -28,6 +29,7 @@
 
   //Handles each key input
   function handleSubmit(ingredient){
+    // console.log(ingredient)
     info = ingredientInfo(ingredient)
     locations = searchIngredients(ingredient)
 
@@ -35,18 +37,20 @@
     info.then(function(result) {
       if (result){
         ingredientObj = []
-        ingredientObj.push(result)
+        for(var x = 0; x < result.length; x++){
+           ingredientObj.push(result[x])
+        }
       } else {
         ingredientObj = []
         shopLatx = null
         shopLngx = null
       }
     })
-
     locations.then(function(result) {
       if (result.length != 0) {
         distances = createLocationMarkers(result, travelMode)
         locationsDistanceObj = orderByDistance(result, distances)
+        searched = 1
         for (var x = 0; x < locationsDistanceObj.length; x++){
           getTravelInfo(x,locationsDistanceObj[x].lat,locationsDistanceObj[x].lng, travelMode)
         }
@@ -162,18 +166,38 @@
 <div class="list-group listContainer">
   {#if locationsDistanceObj.length != 0}
     {#each locationsDistanceObj as shop, i}
-      {#each ingredientObj as ing}
+    <!-- {console.log(locationsDistanceObj)} -->
+      <!-- {#each ingredientObj as ing} -->
         <li class="list-group-item list-group-item-action" id ={shop.id} style="z-index: 1" on:click|preventDefault={() => routeMe(shop.lat,shop.lng, selectedMode)}>
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">Shop name: {shop.name}</h5>
           <small class="text-muted" id={`duration${i}`}></small>
           <small class="text-muted" id={`distance${i}`}></small>
         </div>
-        <p class="mb-1">Name: {ing.name}</p>
-        <small class="text-muted">Size: {ing.size}</small>
+    
+    <!--     <p class="mb-1">Name: {ing.name}</p>
+        <small class="text-muted">Size: {ing.size}</small> -->
         </li>
-      {/each}
+      <!-- {/each} -->
     {/each}
+    <!-- OEN APP STATE INSTRUCTION TO SEARCH FOR AN ITEM -->
+    <!-- {:else if searched == 0}
+     <li class="list-group-item list-group-item-action" style="z-index: 1;margin-top: 20px" >
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Please search for an item</h5>
+          <small class="text-muted"></small>
+          <small class="text-muted"></small>
+        </div>
+         </li> -->
+          <!-- AFTER ONE SUCCESSFUL SEARCH-->
+    {:else if searched > 0}
+     <li class="list-group-item list-group-item-action" style="z-index: 1;margin-top: 20px" >
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">One or more of your items are not within this radius...</h5>
+          <small class="text-muted"></small>
+          <small class="text-muted"></small>
+        </div>
+      </li>
   {/if}
 </div>
 

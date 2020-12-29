@@ -73,19 +73,19 @@ export function createLocationMarkers(latLng, travelMode){
 	clearMarkers()
 
 	let distanceObj = []
-	
+
 	//Loop through array and create markers
-	for (var x =0; x < latLng.length;x++){
-		let locationLat = latLng[x][0].lat
-		let locationLng = latLng[x][0].lng
-		let locationName = latLng[x][0].name
+	for (var x = 0; x < latLng.length;x++){
+		let locationLat = latLng[x].lat
+		let locationLng = latLng[x].lng
+		let locationName = latLng[x].name
 
 		//Use lat, lng and name to create markers function
 		createMarkers(locationLat, locationLng, locationName)
 
 		//Consolidate information needed to calculate distance into the distanceObj
 		distanceObj.push({
-			id: latLng[x][0].id,
+			id: latLng[x].id,
 			currentLat: lat,
 			currentLng: lng,
 			newLat: locationLat,
@@ -96,6 +96,7 @@ export function createLocationMarkers(latLng, travelMode){
 		//Use information in object to return distance and id from Calculate Distance function
 		distances.push(getDistance(distanceObj[x]))
 	}
+	distances = distance.reduce((items, item) => items.find(x => x.id === item.id) ? [...items] : [...items, item], [])
 	//Resize map to fit all bounds
 	map.fitBounds(latlngBounds)
 	return distances
@@ -148,8 +149,9 @@ export function drawPath(newLat, newLng, selectedMode) {
 
 //Gets shop location info and updates small elements with distance and duration
 export function getTimeTaken(i,shopLat, shopLng, selectedMode){
-	const origin = { lat,lng}
+	const origin = {lat,lng}
 	const destination = {lat: shopLat, lng: shopLng}
+	if(destination){
 	const service = new google.maps.DistanceMatrixService();
   	service.getDistanceMatrix({
       origins: [origin],
@@ -163,14 +165,17 @@ export function getTimeTaken(i,shopLat, shopLng, selectedMode){
     if (status !== "OK") {
     	alert("Error was: " + status);
     	} else {
+    		if(response){
         	const originList = response.originAddresses;
 	        const destinationList = response.destinationAddresses;
 	        const durationDiv = document.getElementById(`duration${i}`)
 	        const distanceDiv = document.getElementById(`distance${i}`)
-	        distanceDiv.innerHTML = response.rows[0].elements[0].distance.text
-	        durationDiv.innerHTML = response.rows[0].elements[0].duration.text
+	        distanceDiv.innerHTML = 'Distance: <br>' + response.rows[0].elements[0].distance.text
+	        durationDiv.innerHTML = 'Duration: <br>' + response.rows[0].elements[0].duration.text
+	   	 }
 		}
 	})
+  }
 }
 
 // SUPPORT FUNCTIONS

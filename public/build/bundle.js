@@ -3602,52 +3602,143 @@ var app = (function () {
 
     let storeLocations = [];
     async function searchLocations(locations){
-
     	let response = await axios$1.get(`${url}/locations`).catch(error => console.log(error));
     	let data = response.data;
     	let storeLocations = [];
-    	for (let x=0; x <locations.length; x++){
+    	for (let x = 0; x < locations.length; x++){
     		storeLocations.push(data.filter(item => item.store_id == locations[x]));
     	}
-    	return storeLocations
+    	return storeLocations.flat()
     }
 
     async function searchInventories(ingredient_id){
-    	
+    	// gets data
     	let response = await axios$1.get(`${url}/inventories`).catch(error => console.log(error));
     	let data = response.data;
     	let stores = []; 
     	let filteredData = [];
-    	filteredData = data.filter(item => item.ingredient_id == ingredient_id && item.status == true);
-    	if (filteredData.length == 0){ 
+
+    	//filters data for each id in ingredient_id
+    	for (let x = 0; x < ingredient_id.length; x++){
+    		filteredData.push(data.filter(item => item.ingredient_id == ingredient_id[x] && item.status == true));
+    	}
+
+    	//flattens all data recieved and deletes duplicate stores
+    	//flattens data
+    	let flat = filteredData.flat();
+
+    	//counts store appearances
+    	const counts = flat.reduce((c, v) => {
+      	c[v.store_id] = (c[v.store_id] || 0) + 1;
+     	 return c;
+    	}, {});
+
+    	//counts items searched
+    	const x = filteredData.length;
+
+    	//filters for stores that match every item searched
+    	let result = flat.filter(v => counts[v.store_id] == x);
+
+    	//Deleted duplicate stores
+    	result = result.reduce((items, item) => items.find(x => x.store_id === item.store_id) ? [...items] : [...items, item], []);
+
+
+    	if (result.length == 0) { 
     		console.log('no stores have this in stock');
     	} else {
-    		let locations = filteredData.map(item => item.store_id);
+    		let locations = result.map(item => item.store_id);
     		stores = searchLocations(locations);
     	}
     	return stores
     }
 
+    // OLD CODE BEFORE MULTIPLE INPUTS
+    // let response = await axios.get(`${url}/inventories`).catch(error => console.log(error))
+    // 	let data = response.data
+    // 	let stores = [] 
+    // 	let filteredData = []
+    // 	filteredData = data.filter(item => item.ingredient_id == ingredient_id && item.status == true)
+    // 	if (filteredData.length == 0){ 
+    // 		console.log('no stores have this in stock')
+    // 	} else {
+    // 		let locations = filteredData.map(item => item.store_id)
+    // 		stores = searchLocations(locations)
+    // 	}
+    // 	console.log(stores)
+    // 	return stores
+    // }
+
     async function searchIngredients(ingredient){
+    	if(ingredient){
+    		ingredient = ingredient.toLowerCase();
+    		ingredient = ingredient.replace(/\s/g,'');
+    		ingredient = ingredient.split(',');
+    	}
     	let response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
     	let data = response.data;
     	let ing = [];
     	let filteredData = [];
-    	filteredData = data.filter(item => item.name == ingredient);
-    	if (filteredData.length == 0) ; else {
-    		let ingredient_id = filteredData[0].ingredient_id;
-    		ing = searchInventories(ingredient_id);
-    	}
+    	let ingredient_id = [];
+    	if(ingredient){
+    		for (let x = 0; x< ingredient.length; x++) {
+    			filteredData.push(data.filter(item => item.name == ingredient[x]));
+    		} 
+    		let numSearches = filteredData.length;
+    		filteredData = filteredData.flat();
+
+    		let matchedSearches = filteredData.length;
+    		if (filteredData.length == 0) ; else {
+    				for (let i = 0; i < numSearches; i++){
+    					if(filteredData[i]){
+    						ingredient_id.push(filteredData[i].ingredient_id);
+    						ingredient_id = ingredient_id.filter(function(item, pos) {
+        					return ingredient_id.indexOf(item) == pos	
+    					});
+    					} else {
+    						ingredient_id = [''];
+    					}
+    				}
+    				if (ingredient_id != ''){
+    				ing = searchInventories(ingredient_id);
+    			}else {
+    				ing = '';
+    			}
+    			}
+    		}
     	return ing
     }
 
+    //OLD RESPONSE BEFORE MULTIPLE WORDS
+    // let response = await axios.get(`${url}/ingredients`).catch(error => console.log(error))
+    // 	let data = response.data
+    // 	let ing = []
+    // 	let filteredData = []
+    // 	filteredData = data.filter(item => item.name == ingredient)
+    // 	if (filteredData.length == 0) {
+    // 	} else {
+    // 		let ingredient_id = filteredData[0].ingredient_id
+    // 		ing = searchInventories(ingredient_id)
+    // 	}
+    // 	console.log(ing)
+    // 	return ing
+    // }
+
     async function ingredientInfo(ingredient){
+    	if(ingredient){
+    		ingredient = ingredient.toLowerCase();
+    		ingredient = ingredient.replace(/\s/g,'');
+    		ingredient = ingredient.split(',');
+    	}
     	let response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
     	let data = response.data;
     	let filteredData = [];
-    	filteredData = data.filter(item => item.name == ingredient);
+    	if(ingredient){
+    		for (let x = 0; x< ingredient.length; x++) {
+    			filteredData.push(data.filter(item => item.name == ingredient[x]));
+    		}
+    	}
     	if (filteredData.length != 0){
-    		return filteredData[0]
+    		return filteredData.flat()
     	} 
     	// else {
     	// 	return []
@@ -3655,9 +3746,10 @@ var app = (function () {
     }
 
     function orderByDistance(result, distances){
+    	
     	let trial = [];
     	for(var x = 0; x < result.length; x++){
-        trial.push(result[x][0]);
+        trial.push(result[x]);
       }
       let locationsDistanceObj = trial.map(rslt => Object.assign({}, rslt, {
         distance: distances.filter(dst => dst.id === rslt.id).map(dst => dst.distance)
@@ -3861,19 +3953,19 @@ var app = (function () {
     	clearMarkers();
 
     	let distanceObj = [];
-    	
+
     	//Loop through array and create markers
-    	for (var x =0; x < latLng.length;x++){
-    		let locationLat = latLng[x][0].lat;
-    		let locationLng = latLng[x][0].lng;
-    		let locationName = latLng[x][0].name;
+    	for (var x = 0; x < latLng.length;x++){
+    		let locationLat = latLng[x].lat;
+    		let locationLng = latLng[x].lng;
+    		let locationName = latLng[x].name;
 
     		//Use lat, lng and name to create markers function
     		createMarkers(locationLat, locationLng, locationName);
 
     		//Consolidate information needed to calculate distance into the distanceObj
     		distanceObj.push({
-    			id: latLng[x][0].id,
+    			id: latLng[x].id,
     			currentLat: lat,
     			currentLng: lng,
     			newLat: locationLat,
@@ -3884,6 +3976,7 @@ var app = (function () {
     		//Use information in object to return distance and id from Calculate Distance function
     		distances.push(getDistance(distanceObj[x]));
     	}
+    	distances = distance.reduce((items, item) => items.find(x => x.id === item.id) ? [...items] : [...items, item], []);
     	//Resize map to fit all bounds
     	map.fitBounds(latlngBounds);
     	return distances
@@ -3936,8 +4029,9 @@ var app = (function () {
 
     //Gets shop location info and updates small elements with distance and duration
     function getTimeTaken(i,shopLat, shopLng, selectedMode){
-    	const origin = { lat,lng};
+    	const origin = {lat,lng};
     	const destination = {lat: shopLat, lng: shopLng};
+    	if(destination){
     	const service = new google.maps.DistanceMatrixService();
       	service.getDistanceMatrix({
           origins: [origin],
@@ -3951,14 +4045,17 @@ var app = (function () {
         if (status !== "OK") {
         	alert("Error was: " + status);
         	} else {
+        		if(response){
             	const originList = response.originAddresses;
     	        const destinationList = response.destinationAddresses;
     	        const durationDiv = document.getElementById(`duration${i}`);
     	        const distanceDiv = document.getElementById(`distance${i}`);
-    	        distanceDiv.innerHTML = response.rows[0].elements[0].distance.text;
-    	        durationDiv.innerHTML = response.rows[0].elements[0].duration.text;
+    	        distanceDiv.innerHTML = 'Distance: <br>' + response.rows[0].elements[0].distance.text;
+    	        durationDiv.innerHTML = 'Duration: <br>' + response.rows[0].elements[0].duration.text;
+    	   	 }
     		}
     	});
+      }
     }
 
     // SUPPORT FUNCTIONS
@@ -4002,19 +4099,13 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[21] = list[i];
-    	child_ctx[23] = i;
+    	child_ctx[22] = list[i];
+    	child_ctx[24] = i;
     	return child_ctx;
     }
 
-    function get_each_context_1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[24] = list[i];
-    	return child_ctx;
-    }
-
-    // (136:22) 
-    function create_if_block_4(ctx) {
+    // (140:22) 
+    function create_if_block_5(ctx) {
     	let div;
     	let button;
     	let i;
@@ -4027,10 +4118,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-bus transportButton");
-    			add_location(i, file$1, 138, 6, 4263);
+    			add_location(i, file$1, 142, 6, 4397);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 137, 4, 4172);
-    			add_location(div, file$1, 136, 2, 4162);
+    			add_location(button, file$1, 141, 4, 4306);
+    			add_location(div, file$1, 140, 2, 4296);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4052,17 +4143,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4.name,
+    		id: create_if_block_5.name,
     		type: "if",
-    		source: "(136:22) ",
+    		source: "(140:22) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (130:22) 
-    function create_if_block_3(ctx) {
+    // (134:22) 
+    function create_if_block_4(ctx) {
     	let div;
     	let button;
     	let i;
@@ -4075,10 +4166,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-car transportButton");
-    			add_location(i, file$1, 132, 6, 4075);
+    			add_location(i, file$1, 136, 6, 4209);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 131, 4, 3984);
-    			add_location(div, file$1, 130, 2, 3974);
+    			add_location(button, file$1, 135, 4, 4118);
+    			add_location(div, file$1, 134, 2, 4108);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4100,17 +4191,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3.name,
+    		id: create_if_block_4.name,
     		type: "if",
-    		source: "(130:22) ",
+    		source: "(134:22) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (124:22) 
-    function create_if_block_2(ctx) {
+    // (128:22) 
+    function create_if_block_3(ctx) {
     	let div;
     	let button;
     	let i;
@@ -4123,10 +4214,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-biking transportButton");
-    			add_location(i, file$1, 126, 6, 3884);
+    			add_location(i, file$1, 130, 6, 4018);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 125, 4, 3793);
-    			add_location(div, file$1, 124, 2, 3783);
+    			add_location(button, file$1, 129, 4, 3927);
+    			add_location(div, file$1, 128, 2, 3917);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4148,17 +4239,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2.name,
+    		id: create_if_block_3.name,
     		type: "if",
-    		source: "(124:22) ",
+    		source: "(128:22) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (118:0) {#if toggle == 1}
-    function create_if_block_1$1(ctx) {
+    // (122:0) {#if toggle == 1}
+    function create_if_block_2(ctx) {
     	let div;
     	let button;
     	let i;
@@ -4171,10 +4262,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-walking transportButton");
-    			add_location(i, file$1, 120, 6, 3692);
+    			add_location(i, file$1, 124, 6, 3826);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 119, 4, 3601);
-    			add_location(div, file$1, 118, 2, 3591);
+    			add_location(button, file$1, 123, 4, 3735);
+    			add_location(div, file$1, 122, 2, 3725);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4196,16 +4287,75 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$1.name,
+    		id: create_if_block_2.name,
     		type: "if",
-    		source: "(118:0) {#if toggle == 1}",
+    		source: "(122:0) {#if toggle == 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (163:2) {#if locationsDistanceObj.length != 0}
+    // (193:27) 
+    function create_if_block_1$1(ctx) {
+    	let li;
+    	let div;
+    	let h5;
+    	let t1;
+    	let small0;
+    	let t2;
+    	let small1;
+
+    	const block = {
+    		c: function create() {
+    			li = element("li");
+    			div = element("div");
+    			h5 = element("h5");
+    			h5.textContent = "One or more of your items are not within this radius...";
+    			t1 = space();
+    			small0 = element("small");
+    			t2 = space();
+    			small1 = element("small");
+    			attr_dev(h5, "class", "mb-1");
+    			add_location(h5, file$1, 195, 10, 6524);
+    			attr_dev(small0, "class", "text-muted");
+    			add_location(small0, file$1, 196, 10, 6612);
+    			attr_dev(small1, "class", "text-muted");
+    			add_location(small1, file$1, 197, 10, 6657);
+    			attr_dev(div, "class", "d-flex w-100 justify-content-between");
+    			add_location(div, file$1, 194, 8, 6463);
+    			attr_dev(li, "class", "list-group-item list-group-item-action");
+    			set_style(li, "z-index", "1");
+    			set_style(li, "margin-top", "20px");
+    			add_location(li, file$1, 193, 5, 6366);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, li, anchor);
+    			append_dev(li, div);
+    			append_dev(div, h5);
+    			append_dev(div, t1);
+    			append_dev(div, small0);
+    			append_dev(div, t2);
+    			append_dev(div, small1);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(li);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(193:27) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (167:2) {#if locationsDistanceObj.length != 0}
     function create_if_block$1(ctx) {
     	let each_1_anchor;
     	let each_value = /*locationsDistanceObj*/ ctx[1];
@@ -4232,7 +4382,7 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*ingredientObj, locationsDistanceObj, routeMe, selectedMode*/ 86) {
+    			if (dirty & /*locationsDistanceObj, routeMe, selectedMode*/ 74) {
     				each_value = /*locationsDistanceObj*/ ctx[1];
     				validate_each_argument(each_value);
     				let i;
@@ -4266,20 +4416,20 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(163:2) {#if locationsDistanceObj.length != 0}",
+    		source: "(167:2) {#if locationsDistanceObj.length != 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (165:6) {#each ingredientObj as ing}
-    function create_each_block_1(ctx) {
+    // (168:4) {#each locationsDistanceObj as shop, i}
+    function create_each_block(ctx) {
     	let li;
     	let div;
     	let h5;
     	let t0;
-    	let t1_value = /*shop*/ ctx[21].name + "";
+    	let t1_value = /*shop*/ ctx[22].name + "";
     	let t1;
     	let t2;
     	let small0;
@@ -4287,23 +4437,13 @@ var app = (function () {
     	let t3;
     	let small1;
     	let small1_id_value;
-    	let t4;
-    	let p;
-    	let t5;
-    	let t6_value = /*ing*/ ctx[24].name + "";
-    	let t6;
-    	let t7;
-    	let small2;
-    	let t8;
-    	let t9_value = /*ing*/ ctx[24].size + "";
-    	let t9;
-    	let t10;
     	let li_id_value;
+    	let t4;
     	let mounted;
     	let dispose;
 
     	function click_handler_4() {
-    		return /*click_handler_4*/ ctx[13](/*shop*/ ctx[21]);
+    		return /*click_handler_4*/ ctx[13](/*shop*/ ctx[22]);
     	}
 
     	const block = {
@@ -4318,32 +4458,20 @@ var app = (function () {
     			t3 = space();
     			small1 = element("small");
     			t4 = space();
-    			p = element("p");
-    			t5 = text("Name: ");
-    			t6 = text(t6_value);
-    			t7 = space();
-    			small2 = element("small");
-    			t8 = text("Size: ");
-    			t9 = text(t9_value);
-    			t10 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 167, 10, 5308);
+    			add_location(h5, file$1, 172, 10, 5500);
     			attr_dev(small0, "class", "text-muted");
-    			attr_dev(small0, "id", small0_id_value = `duration${/*i*/ ctx[23]}`);
-    			add_location(small0, file$1, 168, 10, 5363);
+    			attr_dev(small0, "id", small0_id_value = `duration${/*i*/ ctx[24]}`);
+    			add_location(small0, file$1, 173, 10, 5555);
     			attr_dev(small1, "class", "text-muted");
-    			attr_dev(small1, "id", small1_id_value = `distance${/*i*/ ctx[23]}`);
-    			add_location(small1, file$1, 169, 10, 5428);
+    			attr_dev(small1, "id", small1_id_value = `distance${/*i*/ ctx[24]}`);
+    			add_location(small1, file$1, 174, 10, 5620);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 166, 8, 5247);
-    			attr_dev(p, "class", "mb-1");
-    			add_location(p, file$1, 171, 8, 5506);
-    			attr_dev(small2, "class", "text-muted");
-    			add_location(small2, file$1, 172, 8, 5551);
+    			add_location(div, file$1, 171, 8, 5439);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
-    			attr_dev(li, "id", li_id_value = /*shop*/ ctx[21].id);
+    			attr_dev(li, "id", li_id_value = /*shop*/ ctx[22].id);
     			set_style(li, "z-index", "1");
-    			add_location(li, file$1, 165, 8, 5081);
+    			add_location(li, file$1, 170, 8, 5273);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4355,15 +4483,7 @@ var app = (function () {
     			append_dev(div, small0);
     			append_dev(div, t3);
     			append_dev(div, small1);
-    			append_dev(li, t4);
-    			append_dev(li, p);
-    			append_dev(p, t5);
-    			append_dev(p, t6);
-    			append_dev(li, t7);
-    			append_dev(li, small2);
-    			append_dev(small2, t8);
-    			append_dev(small2, t9);
-    			append_dev(li, t10);
+    			insert_dev(target, t4, anchor);
 
     			if (!mounted) {
     				dispose = listen_dev(li, "click", prevent_default(click_handler_4), false, true, false);
@@ -4372,16 +4492,15 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty & /*locationsDistanceObj*/ 2 && t1_value !== (t1_value = /*shop*/ ctx[21].name + "")) set_data_dev(t1, t1_value);
-    			if (dirty & /*ingredientObj*/ 4 && t6_value !== (t6_value = /*ing*/ ctx[24].name + "")) set_data_dev(t6, t6_value);
-    			if (dirty & /*ingredientObj*/ 4 && t9_value !== (t9_value = /*ing*/ ctx[24].size + "")) set_data_dev(t9, t9_value);
+    			if (dirty & /*locationsDistanceObj*/ 2 && t1_value !== (t1_value = /*shop*/ ctx[22].name + "")) set_data_dev(t1, t1_value);
 
-    			if (dirty & /*locationsDistanceObj*/ 2 && li_id_value !== (li_id_value = /*shop*/ ctx[21].id)) {
+    			if (dirty & /*locationsDistanceObj*/ 2 && li_id_value !== (li_id_value = /*shop*/ ctx[22].id)) {
     				attr_dev(li, "id", li_id_value);
     			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(li);
+    			if (detaching) detach_dev(t4);
     			mounted = false;
     			dispose();
     		}
@@ -4389,77 +4508,9 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1.name,
-    		type: "each",
-    		source: "(165:6) {#each ingredientObj as ing}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (164:4) {#each locationsDistanceObj as shop, i}
-    function create_each_block(ctx) {
-    	let each_1_anchor;
-    	let each_value_1 = /*ingredientObj*/ ctx[2];
-    	validate_each_argument(each_value_1);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			each_1_anchor = empty();
-    		},
-    		m: function mount(target, anchor) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
-
-    			insert_dev(target, each_1_anchor, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*locationsDistanceObj, routeMe, selectedMode, ingredientObj*/ 86) {
-    				each_value_1 = /*ingredientObj*/ ctx[2];
-    				validate_each_argument(each_value_1);
-    				let i;
-
-    				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block_1(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value_1.length;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(each_1_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(164:4) {#each locationsDistanceObj as shop, i}",
+    		source: "(168:4) {#each locationsDistanceObj as shop, i}",
     		ctx
     	});
 
@@ -4488,15 +4539,22 @@ var app = (function () {
     	let dispose;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*toggle*/ ctx[3] == 1) return create_if_block_1$1;
-    		if (/*toggle*/ ctx[3] == 2) return create_if_block_2;
-    		if (/*toggle*/ ctx[3] == 3) return create_if_block_3;
-    		if (/*toggle*/ ctx[3] == 4) return create_if_block_4;
+    		if (/*toggle*/ ctx[2] == 1) return create_if_block_2;
+    		if (/*toggle*/ ctx[2] == 2) return create_if_block_3;
+    		if (/*toggle*/ ctx[2] == 3) return create_if_block_4;
+    		if (/*toggle*/ ctx[2] == 4) return create_if_block_5;
     	}
 
     	let current_block_type = select_block_type(ctx);
     	let if_block0 = current_block_type && current_block_type(ctx);
-    	let if_block1 = /*locationsDistanceObj*/ ctx[1].length != 0 && create_if_block$1(ctx);
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*locationsDistanceObj*/ ctx[1].length != 0) return create_if_block$1;
+    		if (/*searched*/ ctx[4] > 0) return create_if_block_1$1;
+    	}
+
+    	let current_block_type_1 = select_block_type_1(ctx);
+    	let if_block1 = current_block_type_1 && current_block_type_1(ctx);
 
     	const block = {
     		c: function create() {
@@ -4520,31 +4578,31 @@ var app = (function () {
     			div4 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(i0, "class", "fas fa-bars menuButton");
-    			add_location(i0, file$1, 112, 2, 3483);
+    			add_location(i0, file$1, 116, 2, 3617);
     			attr_dev(button0, "class", "menuContainer");
-    			add_location(button0, file$1, 111, 1, 3450);
-    			add_location(div0, file$1, 110, 0, 3443);
+    			add_location(button0, file$1, 115, 1, 3584);
+    			add_location(div0, file$1, 114, 0, 3577);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
-    			add_location(div1, file$1, 144, 1, 4346);
+    			add_location(div1, file$1, 148, 1, 4480);
     			attr_dev(i1, "class", "far fa-compass centerButton");
-    			add_location(i1, file$1, 149, 4, 4486);
+    			add_location(i1, file$1, 153, 4, 4620);
     			attr_dev(button1, "class", "centerContainer");
-    			add_location(button1, file$1, 148, 2, 4428);
-    			add_location(div2, file$1, 147, 0, 4420);
+    			add_location(button1, file$1, 152, 2, 4562);
+    			add_location(div2, file$1, 151, 0, 4554);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			set_style(input, "border-radius", "25px");
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
-    			add_location(input, file$1, 155, 2, 4665);
+    			add_location(input, file$1, 159, 2, 4799);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 156, 2, 4840);
+    			add_location(i2, file$1, 160, 2, 4974);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
-    			add_location(div3, file$1, 154, 0, 4573);
+    			add_location(div3, file$1, 158, 0, 4707);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 161, 0, 4914);
+    			add_location(div4, file$1, 165, 0, 5048);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4609,17 +4667,16 @@ var app = (function () {
     				set_input_value(input, /*ingredient*/ ctx[0]);
     			}
 
-    			if (/*locationsDistanceObj*/ ctx[1].length != 0) {
+    			if (current_block_type_1 === (current_block_type_1 = select_block_type_1(ctx)) && if_block1) {
+    				if_block1.p(ctx, dirty);
+    			} else {
+    				if (if_block1) if_block1.d(1);
+    				if_block1 = current_block_type_1 && current_block_type_1(ctx);
+
     				if (if_block1) {
-    					if_block1.p(ctx, dirty);
-    				} else {
-    					if_block1 = create_if_block$1(ctx);
     					if_block1.c();
     					if_block1.m(div4, null);
     				}
-    			} else if (if_block1) {
-    				if_block1.d(1);
-    				if_block1 = null;
     			}
     		},
     		i: noop,
@@ -4640,7 +4697,11 @@ var app = (function () {
     			if (detaching) detach_dev(div3);
     			if (detaching) detach_dev(t5);
     			if (detaching) detach_dev(div4);
-    			if (if_block1) if_block1.d();
+
+    			if (if_block1) {
+    				if_block1.d();
+    			}
+
     			mounted = false;
     			run_all(dispose);
     		}
@@ -4668,6 +4729,7 @@ var app = (function () {
     	let toggle = 1;
     	let travelMode = google.maps.TravelMode.WALKING;
     	let selectedMode = google.maps.DirectionsTravelMode.WALKING;
+    	let searched = 0;
 
     	//On startup open map
     	onMount(() => {
@@ -4676,16 +4738,21 @@ var app = (function () {
 
     	//Handles each key input
     	function handleSubmit(ingredient) {
+    		// console.log(ingredient)
     		info = ingredientInfo(ingredient);
+
     		locations = searchIngredients(ingredient);
 
     		//Will probably need to fix when searching for multiple items. 
     		info.then(function (result) {
     			if (result) {
-    				$$invalidate(2, ingredientObj = []);
-    				ingredientObj.push(result);
+    				ingredientObj = [];
+
+    				for (var x = 0; x < result.length; x++) {
+    					ingredientObj.push(result[x]);
+    				}
     			} else {
-    				$$invalidate(2, ingredientObj = []);
+    				ingredientObj = [];
     				shopLatx = null;
     				shopLngx = null;
     			}
@@ -4695,6 +4762,7 @@ var app = (function () {
     			if (result.length != 0) {
     				distances = createLocationMarkers(result, travelMode);
     				$$invalidate(1, locationsDistanceObj = orderByDistance(result, distances));
+    				$$invalidate(4, searched = 1);
 
     				for (var x = 0; x < locationsDistanceObj.length; x++) {
     					getTravelInfo(x, locationsDistanceObj[x].lat, locationsDistanceObj[x].lng, travelMode);
@@ -4718,31 +4786,31 @@ var app = (function () {
 
     	//Handles transport toggle button and updates all transport info
     	function transportToggle() {
-    		$$invalidate(3, toggle += 1);
+    		$$invalidate(2, toggle += 1);
 
     		if (toggle > 4) {
-    			$$invalidate(3, toggle = 1);
+    			$$invalidate(2, toggle = 1);
     		}
 
     		switch (toggle) {
     			case 1:
-    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.WALKING);
+    				$$invalidate(3, selectedMode = google.maps.DirectionsTravelMode.WALKING);
     				travelMode = google.maps.TravelMode.WALKING;
     				break;
     			case 2:
-    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.BICYCLING);
+    				$$invalidate(3, selectedMode = google.maps.DirectionsTravelMode.BICYCLING);
     				travelMode = google.maps.TravelMode.BICYCLING;
     				break;
     			case 3:
-    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.DRIVING);
+    				$$invalidate(3, selectedMode = google.maps.DirectionsTravelMode.DRIVING);
     				travelMode = google.maps.TravelMode.DRIVING;
     				break;
     			case 4:
-    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.TRANSIT);
+    				$$invalidate(3, selectedMode = google.maps.DirectionsTravelMode.TRANSIT);
     				travelMode = google.maps.TravelMode.TRANSIT;
     				break;
     			default:
-    				$$invalidate(4, selectedMode = google.maps.DirectionsTravelMode.WALKING);
+    				$$invalidate(3, selectedMode = google.maps.DirectionsTravelMode.WALKING);
     				travelMode = google.maps.TravelMode.WALKING;
     		}
 
@@ -4806,6 +4874,7 @@ var app = (function () {
     		toggle,
     		travelMode,
     		selectedMode,
+    		searched,
     		handleSubmit,
     		routeMe,
     		transportToggle,
@@ -4820,10 +4889,11 @@ var app = (function () {
     		if ("locations" in $$props) locations = $$props.locations;
     		if ("info" in $$props) info = $$props.info;
     		if ("locationsDistanceObj" in $$props) $$invalidate(1, locationsDistanceObj = $$props.locationsDistanceObj);
-    		if ("ingredientObj" in $$props) $$invalidate(2, ingredientObj = $$props.ingredientObj);
-    		if ("toggle" in $$props) $$invalidate(3, toggle = $$props.toggle);
+    		if ("ingredientObj" in $$props) ingredientObj = $$props.ingredientObj;
+    		if ("toggle" in $$props) $$invalidate(2, toggle = $$props.toggle);
     		if ("travelMode" in $$props) travelMode = $$props.travelMode;
-    		if ("selectedMode" in $$props) $$invalidate(4, selectedMode = $$props.selectedMode);
+    		if ("selectedMode" in $$props) $$invalidate(3, selectedMode = $$props.selectedMode);
+    		if ("searched" in $$props) $$invalidate(4, searched = $$props.searched);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -4833,9 +4903,9 @@ var app = (function () {
     	return [
     		ingredient,
     		locationsDistanceObj,
-    		ingredientObj,
     		toggle,
     		selectedMode,
+    		searched,
     		handleSubmit,
     		routeMe,
     		transportToggle,
