@@ -19,6 +19,7 @@ export async function searchInventories(ingredient_id){
 	//flattens data
 	let flat = filteredData.flat()
 
+
 	//counts store appearances
 	const counts = flat.reduce((c, v) => {
   	c[v.store_id] = (c[v.store_id] || 0) + 1;
@@ -28,18 +29,37 @@ export async function searchInventories(ingredient_id){
 	//counts items searched
 	const x = filteredData.length
 
-	//filters for stores that match every item searched
+	//filters for inventories that match every item searched
 	let result = flat.filter(v => counts[v.store_id] == x)
 
-	//Deleted duplicate stores
-	result = result.reduce((items, item) => items.find(x => x.store_id === item.store_id) ? [...items] : [...items, item], [])
 
+
+	//Deleted duplicate inventories add prices
+
+	// result = result.reduce((items, item) => items.find(x => x.store_id === item.store_id) ? [...items] : [...items, item], [])
+	result = Object.values(result.reduce((acc,item) => {
+	 	const { store_id } = item;
+		const prev = acc[store_id];
+		acc[store_id] = prev ? { ...prev, total_price: prev.price+item.price } : {...item};
+		return acc;
+		}, {}));
 
 	if (result.length == 0) { 
 		console.log('no stores have this in stock')
 	} else {
-		let locations = result.map(item => item.store_id)
-		stores = searchLocations(locations)
+		let storePrices = []
+		for (let i = 0; i <result.length; i++){
+			if (result[i].total_price){
+			storePrices.push({store_id: result[i].store_id, basketPrice: result[i].total_price})
+		} else {
+			storePrices.push({store_id: result[i].store_id, basketPrice: result[i].price})
+		}
+	}
+
+//WHEN MAPPING STORES I NEED TO ADD THE SUM PRICE TO THE OBJECT
+		// let locations = result.map(item => item.store_id)
+		// console.log(locations)
+		stores = searchLocations(storePrices)
 	}
 	return stores
 }

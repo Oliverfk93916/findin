@@ -3,6 +3,8 @@ import axios from 'axios'
 import url from './URL'
 import {searchInventories} from './searchInventories'
 
+import fuzzball from 'fuzzball/dist/fuzzball.umd.min.js'
+
 export async function searchIngredients(ingredient){
 	if(ingredient){
 		ingredient = ingredient.toLowerCase()
@@ -11,6 +13,12 @@ export async function searchIngredients(ingredient){
 	}
 	let response = await axios.get(`${url}/ingredients`).catch(error => console.log(error))
 	let data = response.data
+
+	//testing fuzzy matching
+	// let ratio = fuzzball.ratio("hello world", "hiyyo wyrld")
+	// console.log(ratio)
+
+
 	let ing = []
 	let filteredData = []
 	let ingredient_id = []
@@ -18,9 +26,9 @@ export async function searchIngredients(ingredient){
 		for (let x = 0; x< ingredient.length; x++) {
 			filteredData.push(data.filter(item => item.name == ingredient[x]))
 		} 
+		//number of items in the array, increases after a ',' due to split
 		let numSearches = filteredData.length
 		filteredData = filteredData.flat()
-
 		let matchedSearches = filteredData.length
 		if (filteredData.length == 0) {
 			} else {
@@ -36,7 +44,7 @@ export async function searchIngredients(ingredient){
 				}
 				if (ingredient_id != ''){
 				ing = searchInventories(ingredient_id)
-			}else {
+			} else {
 				ing = ''
 			}
 			}

@@ -76,16 +76,16 @@ export function createLocationMarkers(latLng, travelMode){
 
 	//Loop through array and create markers
 	for (var x = 0; x < latLng.length;x++){
-		let locationLat = latLng[x].lat
-		let locationLng = latLng[x].lng
-		let locationName = latLng[x].name
+		let locationLat = latLng[x][0].lat
+		let locationLng = latLng[x][0].lng
+		let locationName = latLng[x][0].name
 
 		//Use lat, lng and name to create markers function
 		createMarkers(locationLat, locationLng, locationName)
 
 		//Consolidate information needed to calculate distance into the distanceObj
 		distanceObj.push({
-			id: latLng[x].id,
+			id: latLng[x][0].id,
 			currentLat: lat,
 			currentLng: lng,
 			newLat: locationLat,
@@ -96,7 +96,8 @@ export function createLocationMarkers(latLng, travelMode){
 		//Use information in object to return distance and id from Calculate Distance function
 		distances.push(getDistance(distanceObj[x]))
 	}
-	distances = distance.reduce((items, item) => items.find(x => x.id === item.id) ? [...items] : [...items, item], [])
+	
+	distances = distances.reduce((items, item) => items.find(x => x.id === item.id) ? [...items] : [...items, item], [])
 	//Resize map to fit all bounds
 	map.fitBounds(latlngBounds)
 	return distances

@@ -5,7 +5,7 @@
   import {searchIngredients} from '../store/searchIngredient'
   import {storeLocations} from '../store/searchLocations'
   import {ingredientInfo} from '../store/ingredientInfo'
-  import orderByDistance from '../store/orderByDistance'
+  import optimiseRoute from '../store/optimiseRoute'
 
 	//Map styles
 	import homeMap, {distance, centerMap, createLocationMarkers, drawPath, clearMarkers, getTimeTaken} from '../components/Map/homeMap'
@@ -49,10 +49,10 @@
     locations.then(function(result) {
       if (result.length != 0) {
         distances = createLocationMarkers(result, travelMode)
-        locationsDistanceObj = orderByDistance(result, distances)
+        locationsDistanceObj = optimiseRoute(result, distances)
         searched = 1
         for (var x = 0; x < locationsDistanceObj.length; x++){
-          getTravelInfo(x,locationsDistanceObj[x].lat,locationsDistanceObj[x].lng, travelMode)
+          getTravelInfo(x,locationsDistanceObj[x][0].lat,locationsDistanceObj[x][0].lng, travelMode)
         }
       } else {
         locationsDistanceObj = []
@@ -101,7 +101,7 @@
       drawPath(shopLatx, shopLngx, selectedMode)
     } 
     for (var x = 0; x < locationsDistanceObj.length; x++){
-          getTravelInfo(x,locationsDistanceObj[x].lat,locationsDistanceObj[x].lng, travelMode)
+          getTravelInfo(x,locationsDistanceObj[x][0].lat,locationsDistanceObj[x][0].lng, travelMode)
         }
   }
 
@@ -168,11 +168,12 @@
     {#each locationsDistanceObj as shop, i}
     <!-- {console.log(locationsDistanceObj)} -->
       <!-- {#each ingredientObj as ing} -->
-        <li class="list-group-item list-group-item-action" id ={shop.id} style="z-index: 1" on:click|preventDefault={() => routeMe(shop.lat,shop.lng, selectedMode)}>
+        <li class="list-group-item list-group-item-action" id ={shop[0].id} style="z-index: 1" on:click|preventDefault={() => routeMe(shop[0].lat,shop[0].lng, selectedMode)}>
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">Shop name: {shop.name}</h5>
+          <h5 class="mb-1">Shop name: {shop[0].name}</h5>
           <small class="text-muted" id={`duration${i}`}></small>
           <small class="text-muted" id={`distance${i}`}></small>
+          <small class="text-muted">{`Price: £${shop.basketPrice}`}</small>
         </div>
     
     <!--     <p class="mb-1">Name: {ing.name}</p>
