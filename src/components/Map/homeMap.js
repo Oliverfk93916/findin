@@ -114,6 +114,11 @@ export function clearMarkers(){
 	}
 }
 
+
+//delete route
+export function cancelRoute(){
+	directionsDisplay.setDirections({routes: []})
+}
 //Gets locations and draws paths 
 export function drawPath(newLat, newLng, selectedMode) {
 	clearMarkers()

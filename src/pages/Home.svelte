@@ -8,7 +8,7 @@
   import optimiseRoute from '../store/optimiseRoute'
 
 	//Map styles
-	import homeMap, {distance, centerMap, createLocationMarkers, drawPath, clearMarkers, getTimeTaken} from '../components/Map/homeMap'
+	import homeMap, {distance, centerMap, createLocationMarkers, drawPath, clearMarkers, getTimeTaken, cancelRoute} from '../components/Map/homeMap'
 
   //Global variables
 	let ingredient, shopLatx, shopLngx, distances
@@ -154,10 +154,12 @@
 
 <!-- RE-CENTER BUTTON-->
 <div >
-  <button on:click|once={centerMap} on:dblclick={centerMap} class="centerContainer">
+  <button on:click={centerMap} on:dblclick={cancelRoute} class="centerContainer">
     <i class="far fa-compass centerButton">
   </button>
 </div>
+
+<!-- on:dblclick={centerMap} -->
 
 <!-- INGREDIENT SEARCH -->
 <div class="input-group mb-3 input-group-lg ingredientInput" style="position: absolute;">

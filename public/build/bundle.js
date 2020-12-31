@@ -4124,6 +4124,11 @@ var app = (function () {
     	}
     }
 
+
+    //delete route
+    function cancelRoute(){
+    	directionsDisplay.setDirections({routes: []});
+    }
     //Gets locations and draws paths 
     function drawPath(newLat, newLng, selectedMode) {
     	clearMarkers();
@@ -4251,10 +4256,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-bus transportButton");
-    			add_location(i, file$1, 146, 6, 4467);
+    			add_location(i, file$1, 146, 6, 4480);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 145, 4, 4376);
-    			add_location(div, file$1, 144, 2, 4366);
+    			add_location(button, file$1, 145, 4, 4389);
+    			add_location(div, file$1, 144, 2, 4379);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4299,10 +4304,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-car transportButton");
-    			add_location(i, file$1, 140, 6, 4279);
+    			add_location(i, file$1, 140, 6, 4292);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 139, 4, 4188);
-    			add_location(div, file$1, 138, 2, 4178);
+    			add_location(button, file$1, 139, 4, 4201);
+    			add_location(div, file$1, 138, 2, 4191);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4347,10 +4352,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-biking transportButton");
-    			add_location(i, file$1, 134, 6, 4088);
+    			add_location(i, file$1, 134, 6, 4101);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 133, 4, 3997);
-    			add_location(div, file$1, 132, 2, 3987);
+    			add_location(button, file$1, 133, 4, 4010);
+    			add_location(div, file$1, 132, 2, 4000);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4395,10 +4400,10 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(i, "class", "fas fa-walking transportButton");
-    			add_location(i, file$1, 128, 6, 3896);
+    			add_location(i, file$1, 128, 6, 3909);
     			attr_dev(button, "class", "transportContainer");
-    			add_location(button, file$1, 127, 4, 3805);
-    			add_location(div, file$1, 126, 2, 3795);
+    			add_location(button, file$1, 127, 4, 3818);
+    			add_location(div, file$1, 126, 2, 3808);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4429,7 +4434,7 @@ var app = (function () {
     	return block;
     }
 
-    // (198:27) 
+    // (200:27) 
     function create_if_block_1$1(ctx) {
     	let li;
     	let div;
@@ -4450,17 +4455,17 @@ var app = (function () {
     			t2 = space();
     			small1 = element("small");
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 200, 10, 6712);
+    			add_location(h5, file$1, 202, 10, 6756);
     			attr_dev(small0, "class", "text-muted");
-    			add_location(small0, file$1, 201, 10, 6800);
+    			add_location(small0, file$1, 203, 10, 6844);
     			attr_dev(small1, "class", "text-muted");
-    			add_location(small1, file$1, 202, 10, 6845);
+    			add_location(small1, file$1, 204, 10, 6889);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 199, 8, 6651);
+    			add_location(div, file$1, 201, 8, 6695);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
     			set_style(li, "z-index", "1");
     			set_style(li, "margin-top", "20px");
-    			add_location(li, file$1, 198, 5, 6554);
+    			add_location(li, file$1, 200, 5, 6598);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4481,14 +4486,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(198:27) ",
+    		source: "(200:27) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (171:2) {#if locationsDistanceObj.length != 0}
+    // (173:2) {#if locationsDistanceObj.length != 0}
     function create_if_block$1(ctx) {
     	let each_1_anchor;
     	let each_value = /*locationsDistanceObj*/ ctx[1];
@@ -4549,14 +4554,14 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(171:2) {#if locationsDistanceObj.length != 0}",
+    		source: "(173:2) {#if locationsDistanceObj.length != 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (172:4) {#each locationsDistanceObj as shop, i}
+    // (174:4) {#each locationsDistanceObj as shop, i}
     function create_each_block(ctx) {
     	let li;
     	let div;
@@ -4599,21 +4604,21 @@ var app = (function () {
     			t5 = text(t5_value);
     			t6 = space();
     			attr_dev(h5, "class", "mb-1");
-    			add_location(h5, file$1, 176, 10, 5609);
+    			add_location(h5, file$1, 178, 10, 5653);
     			attr_dev(small0, "class", "text-muted");
     			attr_dev(small0, "id", small0_id_value = `duration${/*i*/ ctx[24]}`);
-    			add_location(small0, file$1, 177, 10, 5667);
+    			add_location(small0, file$1, 179, 10, 5711);
     			attr_dev(small1, "class", "text-muted");
     			attr_dev(small1, "id", small1_id_value = `distance${/*i*/ ctx[24]}`);
-    			add_location(small1, file$1, 178, 10, 5732);
+    			add_location(small1, file$1, 180, 10, 5776);
     			attr_dev(small2, "class", "text-muted");
-    			add_location(small2, file$1, 179, 10, 5797);
+    			add_location(small2, file$1, 181, 10, 5841);
     			attr_dev(div, "class", "d-flex w-100 justify-content-between");
-    			add_location(div, file$1, 175, 8, 5548);
+    			add_location(div, file$1, 177, 8, 5592);
     			attr_dev(li, "class", "list-group-item list-group-item-action");
     			attr_dev(li, "id", li_id_value = /*shop*/ ctx[22][0].id);
     			set_style(li, "z-index", "1");
-    			add_location(li, file$1, 174, 8, 5373);
+    			add_location(li, file$1, 176, 8, 5417);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -4656,7 +4661,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(172:4) {#each locationsDistanceObj as shop, i}",
+    		source: "(174:4) {#each locationsDistanceObj as shop, i}",
     		ctx
     	});
 
@@ -4724,31 +4729,31 @@ var app = (function () {
     			div4 = element("div");
     			if (if_block1) if_block1.c();
     			attr_dev(i0, "class", "fas fa-bars menuButton");
-    			add_location(i0, file$1, 120, 2, 3687);
+    			add_location(i0, file$1, 120, 2, 3700);
     			attr_dev(button0, "class", "menuContainer");
-    			add_location(button0, file$1, 119, 1, 3654);
-    			add_location(div0, file$1, 118, 0, 3647);
+    			add_location(button0, file$1, 119, 1, 3667);
+    			add_location(div0, file$1, 118, 0, 3660);
     			attr_dev(div1, "id", "interactiveMap");
     			attr_dev(div1, "class", "mapHome");
-    			add_location(div1, file$1, 152, 1, 4550);
+    			add_location(div1, file$1, 152, 1, 4563);
     			attr_dev(i1, "class", "far fa-compass centerButton");
-    			add_location(i1, file$1, 157, 4, 4720);
+    			add_location(i1, file$1, 157, 4, 4730);
     			attr_dev(button1, "class", "centerContainer");
-    			add_location(button1, file$1, 156, 2, 4633);
-    			add_location(div2, file$1, 155, 0, 4624);
+    			add_location(button1, file$1, 156, 2, 4646);
+    			add_location(div2, file$1, 155, 0, 4637);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "class", "form-control");
     			set_style(input, "border-radius", "25px");
     			attr_dev(input, "id", "input");
     			attr_dev(input, "placeholder", "Search Ingredient");
-    			add_location(input, file$1, 163, 2, 4899);
+    			add_location(input, file$1, 165, 2, 4943);
     			attr_dev(i2, "class", "fas fa-search-location inputIcon");
-    			add_location(i2, file$1, 164, 2, 5074);
+    			add_location(i2, file$1, 166, 2, 5118);
     			attr_dev(div3, "class", "input-group mb-3 input-group-lg ingredientInput");
     			set_style(div3, "position", "absolute");
-    			add_location(div3, file$1, 162, 0, 4807);
+    			add_location(div3, file$1, 164, 0, 4851);
     			attr_dev(div4, "class", "list-group listContainer");
-    			add_location(div4, file$1, 169, 0, 5148);
+    			add_location(div4, file$1, 171, 0, 5192);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4777,8 +4782,8 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button1, "click", centerMap, { once: true }, false, false),
-    					listen_dev(button1, "dblclick", centerMap, false, false, false),
+    					listen_dev(button1, "click", centerMap, false, false, false),
+    					listen_dev(button1, "dblclick", cancelRoute, false, false, false),
     					listen_dev(input, "input", /*input_input_handler*/ ctx[12]),
     					listen_dev(
     						input,
@@ -5014,6 +5019,7 @@ var app = (function () {
     		drawPath,
     		clearMarkers,
     		getTimeTaken,
+    		cancelRoute,
     		ingredient,
     		shopLatx,
     		shopLngx,
