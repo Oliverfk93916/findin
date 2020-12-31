@@ -32,10 +32,7 @@ export async function searchInventories(ingredient_id){
 	//filters for inventories that match every item searched
 	let result = flat.filter(v => counts[v.store_id] == x)
 
-
-
 	//Deleted duplicate inventories add prices
-
 	// result = result.reduce((items, item) => items.find(x => x.store_id === item.store_id) ? [...items] : [...items, item], [])
 	result = Object.values(result.reduce((acc,item) => {
 	 	const { store_id } = item;
@@ -56,7 +53,6 @@ export async function searchInventories(ingredient_id){
 		}
 	}
 
-//WHEN MAPPING STORES I NEED TO ADD THE SUM PRICE TO THE OBJECT
 		// let locations = result.map(item => item.store_id)
 		// console.log(locations)
 		stores = searchLocations(storePrices)

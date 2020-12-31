@@ -3604,12 +3604,20 @@ var app = (function () {
     async function searchLocations(locations){
     	let response = await axios$1.get(`${url}/locations`).catch(error => console.log(error));
     	let data = response.data;
+
+    	var date = new Date();
+
+    	let day = date.getDay();
+
+    	let today = date.toLocaleString('en-GB', {weekday:'long'}).toLowerCase();
+
+    	let currentTime = date.toLocaleString('en-GB', {hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
+
     	let storeLocations = [];
     	let storeInfo;
     	for (let x = 0; x < locations.length; x++){
     		storeInfo = data.filter(item => item.store_id == locations[x].store_id);
     		let basketPrice = {basketPrice: locations[x].basketPrice};
-
     		storeLocations.push({
     			...storeInfo,
     			...basketPrice
@@ -3619,8 +3627,15 @@ var app = (function () {
     		// storeLocations.push(storeInfo)
     		// storeLocations.basketPrice  = locations[x].basketPrice
     		// console.log(newObject)
-
     	}
+
+    	//Opening days filter
+    	storeLocations = storeLocations.filter((item) => item[0].days_open[today] === true);
+
+    	// Opening hours filter CURRENTLY DOESN'T HANDLE PAST MIDNIGHT
+    	storeLocations = storeLocations.filter((item)=> item[0].opens < currentTime && item[0].closes > currentTime);
+
+
     		return storeLocations.flat()
     }
 
@@ -3653,10 +3668,7 @@ var app = (function () {
     	//filters for inventories that match every item searched
     	let result = flat.filter(v => counts[v.store_id] == x);
 
-
-
     	//Deleted duplicate inventories add prices
-
     	// result = result.reduce((items, item) => items.find(x => x.store_id === item.store_id) ? [...items] : [...items, item], [])
     	result = Object.values(result.reduce((acc,item) => {
     	 	const { store_id } = item;
@@ -3677,7 +3689,6 @@ var app = (function () {
     		}
     	}
 
-    //WHEN MAPPING STORES I NEED TO ADD THE SUM PRICE TO THE OBJECT
     		// let locations = result.map(item => item.store_id)
     		// console.log(locations)
     		stores = searchLocations(storePrices);
@@ -3733,21 +3744,20 @@ var app = (function () {
     	let response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
     	let data = response.data;
 
-
-    	fuzzball_umd_min.token_set_ratio("fuzzy was a bear", "a fuzzy bear fuzzy was");
-
     	let options =  {scorer: fuzzball_umd_min.token_set_ratio};
     	let choices = data.map(item => item.name);
     	let confindenceLevel = 80;
+    	let nameLocation = 0;
+    	let scoreLocation = 1;
+
     	let extracted = [];
-    	
     	//testing fuzzy matching
     	if(ingredient){
     		for (var i = 0; i < ingredient.length;i++){
-    			let fuzz = fuzzball_umd_min.extract(ingredient[i], choices,options);
-    			for (var x =0; x< fuzz.length; x++){
-    				if(fuzz[x][1] > confindenceLevel){
-    					extracted.push(fuzz[x][0]);
+    			let fuzz = fuzzball_umd_min.extract(ingredient[i], choices, options);
+    			for (var x = 0; x< fuzz.length; x++){
+    				if(fuzz[x][scoreLocation] >= confindenceLevel){
+    					extracted.push(fuzz[x][nameLocation]);
     				}
     			} 
     		}
