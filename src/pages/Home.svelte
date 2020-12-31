@@ -105,6 +105,10 @@
         }
   }
 
+  function handleDblClick(event){
+    console.log('hello')
+  }
+
   //Support function to get duration and distance
   function getTravelInfo(i,shopLat, shopLng, travelMode){
     getTimeTaken(i,shopLat, shopLng, travelMode)
@@ -149,8 +153,8 @@
 	<div id="interactiveMap" class="mapHome"></div>
 
 <!-- RE-CENTER BUTTON-->
-<div>
-  <button on:click={centerMap} class="centerContainer">
+<div >
+  <button on:click|once={centerMap} on:dblclick={centerMap} class="centerContainer">
     <i class="far fa-compass centerButton">
   </button>
 </div>

@@ -41,6 +41,7 @@ export default function optimiseRoute(result, distances){
   //This sorts via the lowest price
   // let lowestPrice = locationsDistanceObj.sort((a,b) => parseFloat(a.basketPrice) - parseFloat(b.basketPrice))
 
+
   //This sorts via the smallest priority number first
   optimisedList.sort((a,b) => parseFloat(a.priorityNumber) - parseFloat(b.priorityNumber))
 
