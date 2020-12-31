@@ -106,7 +106,11 @@
   }
 
   function handleDblClick(event){
-    console.log('hello')
+    
+    // cancelRoute()
+    homeMap()
+    handleSubmit(ingredient)
+
   }
 
   //Support function to get duration and distance
@@ -154,17 +158,18 @@
 
 <!-- RE-CENTER BUTTON-->
 <div >
-  <button on:click={centerMap} on:dblclick={cancelRoute} class="centerContainer">
+  <button on:click={centerMap} on:dblclick={handleDblClick} class="centerContainer">
     <i class="far fa-compass centerButton">
   </button>
 </div>
 
-<!-- on:dblclick={centerMap} -->
 
 <!-- INGREDIENT SEARCH -->
 <div class="input-group mb-3 input-group-lg ingredientInput" style="position: absolute;">
   <input type="text" class="form-control" style="border-radius: 25px;"id="input" placeholder="Search Ingredient" bind:value={ingredient} on:input={handleSubmit(ingredient)} >
-  <i class="fas fa-search-location inputIcon">
+  <!-- <button > -->
+  <i class="fas fa-search-location inputIcon" on:click={() => ingredient = ''}>
+  <!-- </button> -->
 </div>
 
 
