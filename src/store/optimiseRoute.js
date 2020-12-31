@@ -7,25 +7,26 @@ export default function optimiseRoute(result, distances){
   let locationsDistanceObj = result.map(rslt => Object.assign({}, rslt, {
     distance: distances.filter(dst => dst.id === rslt[0].id).map(dst => dst.distance)
   }))
-  //HERE IS WHERE I WILL MAKE THE ALGO TO SORT 'BEST ROUTE'
 
+
+  // get cost mean
   let cost = 0
-    for (let x = 0; x < locationsDistanceObj.length; x++){
-      cost += locationsDistanceObj[x].basketPrice
+  for (let x = 0; x < locationsDistanceObj.length; x++){
+    cost += locationsDistanceObj[x].basketPrice
   }
-
-  let distance = 0
-
-    for(let i = 0; i < locationsDistanceObj.length; i++){
-      distance += locationsDistanceObj[i].distance[0]
-    }
-
-
-  let distanceMean = distance / locationsDistanceObj.length
   let priceMean = cost / locationsDistanceObj.length
 
-  let optimisedList = []
 
+  //get distance mean
+  let distance = 0
+  for(let i = 0; i < locationsDistanceObj.length; i++){
+    distance += locationsDistanceObj[i].distance[0]
+  }
+  let distanceMean = distance / locationsDistanceObj.length
+  
+
+  //This is currently the algo for best route basted on distance from mean
+  let optimisedList = []
   for (let j = 0; j < locationsDistanceObj.length; j++){
     optimisedList.push({
       ...locationsDistanceObj[j],
@@ -40,6 +41,7 @@ export default function optimiseRoute(result, distances){
   //This sorts via the lowest price
   // let lowestPrice = locationsDistanceObj.sort((a,b) => parseFloat(a.basketPrice) - parseFloat(b.basketPrice))
 
+  //This sorts via the smallest priority number first
   optimisedList.sort((a,b) => parseFloat(a.priorityNumber) - parseFloat(b.priorityNumber))
 
 

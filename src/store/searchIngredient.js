@@ -14,17 +14,32 @@ export async function searchIngredients(ingredient){
 	let response = await axios.get(`${url}/ingredients`).catch(error => console.log(error))
 	let data = response.data
 
-	//testing fuzzy matching
-	// let ratio = fuzzball.ratio("hello world", "hiyyo wyrld")
-	// console.log(ratio)
 
+	fuzzball.token_set_ratio("fuzzy was a bear", "a fuzzy bear fuzzy was")
+
+	let options =  {scorer: fuzzball.token_set_ratio}
+	let choices = data.map(item => item.name)
+	let confindenceLevel = 80
+	let extracted = []
+	
+	//testing fuzzy matching
+	if(ingredient){
+		for (var i = 0; i < ingredient.length;i++){
+			let fuzz = fuzzball.extract(ingredient[i], choices,options)
+			for (var x =0; x< fuzz.length; x++){
+				if(fuzz[x][1] > confindenceLevel){
+					extracted.push(fuzz[x][0])
+				}
+			} 
+		}
+	}
 
 	let ing = []
 	let filteredData = []
 	let ingredient_id = []
-	if(ingredient){
-		for (let x = 0; x< ingredient.length; x++) {
-			filteredData.push(data.filter(item => item.name == ingredient[x]))
+	if(extracted){
+		for (let x = 0; x< extracted.length; x++) {
+			filteredData.push(data.filter(item => item.name == extracted[x]))
 		} 
 		//number of items in the array, increases after a ',' due to split
 		let numSearches = filteredData.length

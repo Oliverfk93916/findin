@@ -3733,17 +3733,32 @@ var app = (function () {
     	let response = await axios$1.get(`${url}/ingredients`).catch(error => console.log(error));
     	let data = response.data;
 
-    	//testing fuzzy matching
-    	// let ratio = fuzzball.ratio("hello world", "hiyyo wyrld")
-    	// console.log(ratio)
 
+    	fuzzball_umd_min.token_set_ratio("fuzzy was a bear", "a fuzzy bear fuzzy was");
+
+    	let options =  {scorer: fuzzball_umd_min.token_set_ratio};
+    	let choices = data.map(item => item.name);
+    	let confindenceLevel = 80;
+    	let extracted = [];
+    	
+    	//testing fuzzy matching
+    	if(ingredient){
+    		for (var i = 0; i < ingredient.length;i++){
+    			let fuzz = fuzzball_umd_min.extract(ingredient[i], choices,options);
+    			for (var x =0; x< fuzz.length; x++){
+    				if(fuzz[x][1] > confindenceLevel){
+    					extracted.push(fuzz[x][0]);
+    				}
+    			} 
+    		}
+    	}
 
     	let ing = [];
     	let filteredData = [];
     	let ingredient_id = [];
-    	if(ingredient){
-    		for (let x = 0; x< ingredient.length; x++) {
-    			filteredData.push(data.filter(item => item.name == ingredient[x]));
+    	if(extracted){
+    		for (let x = 0; x< extracted.length; x++) {
+    			filteredData.push(data.filter(item => item.name == extracted[x]));
     		} 
     		//number of items in the array, increases after a ',' due to split
     		let numSearches = filteredData.length;
@@ -3815,25 +3830,26 @@ var app = (function () {
       let locationsDistanceObj = result.map(rslt => Object.assign({}, rslt, {
         distance: distances.filter(dst => dst.id === rslt[0].id).map(dst => dst.distance)
       }));
-      //HERE IS WHERE I WILL MAKE THE ALGO TO SORT 'BEST ROUTE'
 
+
+      // get cost mean
       let cost = 0;
-        for (let x = 0; x < locationsDistanceObj.length; x++){
-          cost += locationsDistanceObj[x].basketPrice;
+      for (let x = 0; x < locationsDistanceObj.length; x++){
+        cost += locationsDistanceObj[x].basketPrice;
       }
-
-      let distance = 0;
-
-        for(let i = 0; i < locationsDistanceObj.length; i++){
-          distance += locationsDistanceObj[i].distance[0];
-        }
-
-
-      let distanceMean = distance / locationsDistanceObj.length;
       let priceMean = cost / locationsDistanceObj.length;
 
-      let optimisedList = [];
 
+      //get distance mean
+      let distance = 0;
+      for(let i = 0; i < locationsDistanceObj.length; i++){
+        distance += locationsDistanceObj[i].distance[0];
+      }
+      let distanceMean = distance / locationsDistanceObj.length;
+      
+
+      //This is currently the algo for best route basted on distance from mean
+      let optimisedList = [];
       for (let j = 0; j < locationsDistanceObj.length; j++){
         optimisedList.push({
           ...locationsDistanceObj[j],
@@ -3848,6 +3864,7 @@ var app = (function () {
       //This sorts via the lowest price
       // let lowestPrice = locationsDistanceObj.sort((a,b) => parseFloat(a.basketPrice) - parseFloat(b.basketPrice))
 
+      //This sorts via the smallest priority number first
       optimisedList.sort((a,b) => parseFloat(a.priorityNumber) - parseFloat(b.priorityNumber));
 
 
