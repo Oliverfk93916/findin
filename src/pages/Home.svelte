@@ -122,6 +122,24 @@
 {#if toggle == 1}
   <div>
     <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
+      <i class="fas fa-walking transportButton">
+    </button>
+  </div>
+{:else if toggle == 2}
+  <div>
+    <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
+      <i class="fas fa-biking transportButton">
+    </button>
+  </div>
+{:else if toggle == 3}
+  <div>
+    <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
+      <i class="fas fa-car transportButton">
+    </button>
+  </div>
+{:else if toggle == 4}
+  <div>
+    <button class="transportContainer" on:click|preventDefault={()=> transportToggle()}>
       <i class="fas fa-bus transportButton">
     </button>
   </div>
